@@ -25,6 +25,9 @@ I. GitHub information
         GitHubLink: https://github.com/2020-bgmp/group-projects-yu-lab-project
         Local computer: /home/cchua/bioinformatics/group-projects-yu-lab-project
         Talapas (temporary): /projects/bgmp/mchang3/temp_proj_dir/data
+        Google Drive: https://drive.google.com/drive/folders/1gaivw0KDvIC3jG6LDb2otxM6PMkNQBCS
+            - meeting notes
+            - group assignments
     B. Clone repo
         NOTE: created readme.MD file to clone
         git clone https://github.com/2020-bgmp/group-projects-yu-lab-project.git
@@ -43,7 +46,68 @@ I. GitHub information
         git commit -m "Chris' Lab Notebook"
         git push
         git pull
-II. Data Exploration
+II. Data integrity
+    cat P10.md5
+        279aac0db745cee15a50f780f1db2b60  P10.read1.fastq.gz
+        ff4717b14975c9d60d910df461b46f88  P10.read2.fastq.gz
+        622b7c61c38b109298458caa37d5cab4  P10.index.fq.gz
+    md5sum P10.index.fq.gz
+        622b7c61c38b109298458caa37d5cab4  P10.index.fq.gz
+    md5sum P10.read1.fastq.gz
+        279aac0db745cee15a50f780f1db2b60  P10.read1.fastq.gz
+    md5sum P10.read2.fastq.gz
+        ff4717b14975c9d60d910df461b46f88  P10.read2.fastq.gz
+III. Data Exploration
     A. interactive session
         srun --account=bgmp --partition=bgmp --nodes=1 --ntasks-per-node=1 \
         --time=2:00:00 --cpus-per-task=1 --pty bash
+
+        squeue -u cchua
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          13184935      bgmp     bash    cchua  R       0:07      1 n225
+    B. List files
+         ls -1
+            P10.index.fq.gz
+            P10.md5
+            P10.read1.fastq.gz
+            P10.read2.fastq.gz
+    C. Head each file
+        zcat P10.index.fq.gz | head
+            @D00575:498:HK7KCBCX2:1:1102:1429:1888 1:N:0:TCAGCCGT
+            TCAGCCGT
+            +
+            DDDDDIII
+            @D00575:498:HK7KCBCX2:1:1102:1392:1911 1:N:0:TCAGCCGT
+            TCAGCCGT
+            +
+            DDDDDIII
+            @D00575:498:HK7KCBCX2:1:1102:1395:1983 1:N:0:TCAGCCGT
+            TCAGCCGT
+        zcat P10.read1.fastq.gz | head
+            @D00575:548:HTLKKBCX2:1:1104:1179:1841 1:N:0:TCAGCCGT
+            NATATGGAGTGACATAACCCACGGTTT
+            +
+            #<DDDIIIIIIIIIIIIIIIIIIIIIH
+            @D00575:548:HTLKKBCX2:1:1104:1137:1877 1:N:0:TCAGCCGT
+            NAGGTTCGTTCGGGCTAGGGGGTTGAT
+            +
+            #<DDDHIIHIIIIIIIIIHHDIEHHIH
+            @D00575:548:HTLKKBCX2:1:1104:1104:1901 1:N:0:TCAGCCGT
+            ACGCAGCAGTACACCTCTATCTGTCGT
+        zcat P10.read2.fastq.gz | head
+            @D00575:548:HTLKKBCX2:1:1104:1179:1841 2:N:0:TCAGCCGT
+            CTCGCCCCTACCATTGGGACAGGAATGTCATGTCACCCCATCGTCCTGTGTCTCCCACCATCGCTATGCAAAGTGGTTCTTGTTGTACATAAGATTTAA
+            +
+            DDDDDIIIIIIHHIIIGIIHHHC@HEHHHIHHIIIIIIHHIIIIIIHIIGHHHIIIHIIIIIIIIHHHHHEHHHIIIHEHHHFH@GFHIHHIHHIHFHH
+            @D00575:548:HTLKKBCX2:1:1104:1137:1877 2:N:0:TCAGCCGT
+            GGCCAAACAGGAAAAGAAGAAGAAGAAGACAGGCCGGGCCAAGAGGCGAATGCAGTACAACCGGCGCTTTGTCAATGTTGTGCCCACCTTTGGGAAGAA
+            +
+            DDDDDIHGIIIGFEHH@FH@CECEE1<GCH@@CEHHIHHIIHHFHGHIIHIIIHIHHIIIIIGHHHIIIIIIHIIIEH@GHIIHIGHIHGHHIHIIIEE
+            @D00575:548:HTLKKBCX2:1:1104:1104:1901 2:N:0:TCAGCCGT
+            GGTCGCCAAAGTGACAGCCGGCGCCGCGTCCAAGCTCTCCAAGATACGAGTCGTTCGCAAGTCTATCGCCCGAGTCCTCACTGTTATGAACCAGACTCA
+        conclusions:
+        - paired reads, same locations in the header lines
+        - the lengths of the two reads are different - 10x Genomic Specific?
+        - where is the bitwise flag?
+        - header lines contain the barcodes information
+        - there is only 1 index file
