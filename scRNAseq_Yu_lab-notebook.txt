@@ -1,0 +1,26 @@
+----------------------
+|  scRNA-seq Yu Lab  |
+----------------------
+
+Christian Chua
+Bioninformatics 624
+Fall 2020
+
+----------------------
+| Table of Contents  |
+----------------------
+
+Date        Description
+10/07/2020  Temporary Data Location; Data Exploration
+
+----------------------
+|     10/07/2020     |
+----------------------
+
+Objective: Data Exploration
+Description: Figure out why there are less index reads than the files. 10x Genomics
+
+I. create an interactive session
+    A. 
+        srun --account=bgmp --partition=bgmp --nodes=1 --ntasks-per-node=1 \
+        --time=2:00:00 --cpus-per-task=1 --pty bash
