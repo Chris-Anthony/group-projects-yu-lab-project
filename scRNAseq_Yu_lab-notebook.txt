@@ -20,7 +20,30 @@ Date        Description
 Objective: Data Exploration
 Description: Figure out why there are less index reads than the files. 10x Genomics
 
-I. create an interactive session
-    A. 
+I. GitHub information
+    A. Locations
+        GitHubLink: https://github.com/2020-bgmp/group-projects-yu-lab-project
+        Local computer: /home/cchua/bioinformatics/group-projects-yu-lab-project
+        Talapas (temporary): /projects/bgmp/mchang3/temp_proj_dir/data
+    B. Clone repo
+        NOTE: created readme.MD file to clone
+        git clone https://github.com/2020-bgmp/group-projects-yu-lab-project.git
+        cd group-projects-yu-lab-project/
+        git remote rename origin upstream
+        git remote add origin https://github.com/2020-bgmp/group-projects-yu-lab-project.git
+        git remote -v
+        git pull origin master
+        git push -u origin master
+    C. Configure Git
+        git config --global user.email "chrisanthony92@ymail.com"
+        git config --global user.name "Chris-Anthony"
+    D. Commit Lab Notebook
+        git add scRNAseq_Yu_lab-notebook.txt
+        git status
+        git commit -m "Chris' Lab Notebook"
+        git push
+        git pull
+II. Data Exploration
+    A. interactive session
         srun --account=bgmp --partition=bgmp --nodes=1 --ntasks-per-node=1 \
         --time=2:00:00 --cpus-per-task=1 --pty bash
