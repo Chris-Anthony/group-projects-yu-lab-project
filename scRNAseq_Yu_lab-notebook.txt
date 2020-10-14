@@ -12,19 +12,22 @@ Fall 2020
 
 Date        Description
 10/07/2020  Temporary Data Location; Data Exploration
+10/08/2020  Data Exploration II; 10x Genomics and CellRanger Information
+
 
 ----------------------
 |     10/07/2020     |
 ----------------------
 
-Objective: Data Exploration
+Objective: Document Data Information; Data Exploration
 Description: Figure out why there are less index reads than the files. 10x Genomics
 
-I. GitHub information
+I. GitHub
     A. Locations
         GitHubLink: https://github.com/2020-bgmp/group-projects-yu-lab-project
         Local computer: /home/cchua/bioinformatics/group-projects-yu-lab-project
         Talapas (temporary): /projects/bgmp/mchang3/temp_proj_dir/data
+        Talapas (permanent): /projects/bgmp/shared/groups/2020/neuron_nerds
         Google Drive: https://drive.google.com/drive/folders/1gaivw0KDvIC3jG6LDb2otxM6PMkNQBCS
             - meeting notes
             - group assignments
@@ -46,18 +49,7 @@ I. GitHub information
         git commit -m "Chris' Lab Notebook"
         git push
         git pull
-II. Data integrity
-    cat P10.md5
-        279aac0db745cee15a50f780f1db2b60  P10.read1.fastq.gz
-        ff4717b14975c9d60d910df461b46f88  P10.read2.fastq.gz
-        622b7c61c38b109298458caa37d5cab4  P10.index.fq.gz
-    md5sum P10.index.fq.gz
-        622b7c61c38b109298458caa37d5cab4  P10.index.fq.gz
-    md5sum P10.read1.fastq.gz
-        279aac0db745cee15a50f780f1db2b60  P10.read1.fastq.gz
-    md5sum P10.read2.fastq.gz
-        ff4717b14975c9d60d910df461b46f88  P10.read2.fastq.gz
-III. Data Exploration
+II. Data Exploration
     A. interactive session
         srun --account=bgmp --partition=bgmp --nodes=1 --ntasks-per-node=1 \
         --time=2:00:00 --cpus-per-task=1 --pty bash
@@ -71,7 +63,18 @@ III. Data Exploration
             P10.md5
             P10.read1.fastq.gz
             P10.read2.fastq.gz
-    C. Head each file
+    C. Check data integrity
+        cat P10.md5
+            279aac0db745cee15a50f780f1db2b60  P10.read1.fastq.gz
+            ff4717b14975c9d60d910df461b46f88  P10.read2.fastq.gz
+            622b7c61c38b109298458caa37d5cab4  P10.index.fq.gz
+        md5sum P10.index.fq.gz
+            622b7c61c38b109298458caa37d5cab4  P10.index.fq.gz
+        md5sum P10.read1.fastq.gz
+            279aac0db745cee15a50f780f1db2b60  P10.read1.fastq.gz
+        md5sum P10.read2.fastq.gz
+            ff4717b14975c9d60d910df461b46f88  P10.read2.fastq.gz
+    D. Head each file
         zcat P10.index.fq.gz | head
             @D00575:498:HK7KCBCX2:1:1102:1429:1888 1:N:0:TCAGCCGT
             TCAGCCGT
@@ -111,3 +114,211 @@ III. Data Exploration
         - where is the bitwise flag?
         - header lines contain the barcodes information
         - there is only 1 index file
+    E. Tail each file 
+        zcat P10.index.fq.gz | tail
+            +
+            @0<D@FHH
+            @D00575:498:HK7KCBCX2:2:2216:20762:101228 1:N:0:ATCTTTAG
+            ATCTTTAG
+            +
+            D@BDDIII
+            @D00575:498:HK7KCBCX2:2:2216:21093:101121 1:N:0:ATCTTTAG
+            ATCTTTAG
+            +
+            DD0DDC1<
+         zcat P10.read1.fastq.gz | tail
+            +
+            D00D@<1C@FHHFFHHHI/1F1FH1<D
+            @D00575:548:HTLKKBCX2:2:2216:21294:101002 1:N:0:ATCTTTAG
+            GTTCTCGCAGCCTATATTGCCACACGT
+            +
+            DDDDDIHHIHGGHIIIHIHHHGHIIIH
+            @D00575:548:HTLKKBCX2:2:2216:21271:101030 1:N:0:ATCTTTAG
+            CGTCTACTCTCTTATGCGACTTTTGTT
+            +
+            D@BD?<FHHIHIEF?11EC//EGC@HH
+        zcat P10.read2.fastq.gz | tail
+            +
+            BDD?@1111<@C@11<<1<1<<1C11@1G?11<F?1111<=/?E=?1111C1C111<F1<<111<1CC?C0C@@1<111<D11@11<111<<1<<FHGC
+            @D00575:548:HTLKKBCX2:2:2216:21294:101002 2:N:0:ATCTTTAG
+            GTCAGACTCCCAAGGTGGCCAAACAGGAAAAGAAGAAGAAGAAGACAGGCCGGGCCAAGAGGCGAATGCAGTACAACCGGCGCTTTGTCAATGTTGTGC
+            +
+            DDCBBIHHH@GFHEHHHIGHEHHHHIIEFGHHGHHHIHHHIIGGHIIIIIIIIIIIIIIHIEHFHHHIIIHHIIIHEHH?DHHHHIHHIIH?@DGEH=<
+            @D00575:548:HTLKKBCX2:2:2216:21271:101030 2:N:0:ATCTTTAG
+            GAAAAAAAAAAAAATTAAAAAAACAAGGTCCCTACACCGCTCCCTCCTTTTTAACAAGGAAGTTGAAATTTAGGGTTTCCTTTTCATCGGAACCCTGAA
+            +
+            DA@DBGDHD</C/CCG<<@CCDCCCH11<1<1<<CH11/</</1<@G@1CCF111<<11<11<1<1DC1<11111<10111<<11<111001/<<C11<
+        conclusions:
+        - no extraneous lines
+
+----------------------
+|     10/08/2020     |
+----------------------
+
+Objective: Data Exploration continued; 
+Description: Review 10x Genomics Sequencing; Review Cell-Ranger
+
+srun --account=bgmp --partition=bgmp --nodes=1 --ntasks-per-node=1 \
+--time=2:00:00 --cpus-per-task=1 --pty bash
+
+        squeue -u cchua
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          13185261      bgmp     bash    cchua  R       0:05      1 n225
+
+    F. Find number of records
+        zcat P10.index.fq.gz | wc -l
+            332566572
+
+        zcat P10.read1.fastq.gz | wc -l
+            1064991604
+
+        zcat P10.read2.fastq.gz | wc -l
+            timed out error -> rerun as a slurm script
+
+            nano wc_read2.srun
+
+                #!/bin/bash
+                #SBATCH --account=bgmp
+                #SBATCH --partition=bgmp
+                #SBATCH --job-name=wc_read2_%j
+                #SBATCH --output=wc_read2_%j.out
+                #SBATCH --error=wc_read2_%j.err
+                #SBATCH --time=0-23:59:59
+                #SBATCH --nodes=1
+                #SBATCH --ntasks-per-node=1
+                #SBATCH --cpus-per-task=1
+
+                dir="/projects/bgmp/shared/groups/2020/neuron_nerds/THE_DATA"
+
+                /usr/bin/time -v zcat $dir/P10.read2.fastq.gz | wc -l
+
+            sbatch wc_read2.srun
+
+    G. Length of reads
+        zcat P10.index.fq.gz | head -2 | tail -1 | wc -c
+            9
+            8 characters because of newline character
+
+        zcat P10.read1.fastq.gz | head -2 | tail -1 | wc -c
+            28
+            27 characters
+
+        zcat P10.read2.fastq.gz | head -2 | tail -1 | wc -c
+            100
+            99 characters
+
+    H. Pull indices out of header line
+        NOTE: Make this a slurm script and run in personal directory
+        nano count_index.srun
+
+            #!/bin/bash
+            #SBATCH --account=bgmp
+            #SBATCH --partition=bgmp
+            #SBATCH --job-name=count_index_%j
+            #SBATCH --output=count_index_%j.out
+            #SBATCH --error=count_index_%j.err
+            #SBATCH --time=0-23:59:59
+            #SBATCH --nodes=1
+            #SBATCH --ntasks-per-node=1
+            #SBATCH --cpus-per-task=1
+
+            dir="/projects/bgmp/shared/groups/2020/neuron_nerds/THE_DATA"
+
+            /usr/bin/time -v | zcat $dir/P10.index.fq.gz | sed -n '1~4p' \
+            | cut --delimiter=" " --fields=2 | cut --delimiter=":" --fields=4 \
+            | sort | uniq -c > index_barcodes.txt
+
+            /usr/bin/time -v | zcat $dir/P10.read1.fastq.gz | sed -n '1~4p' \
+            | cut --delimiter=" " --fields=2 | cut --delimiter=":" --fields=4 \
+            | sort | uniq -c > read1_barcodes.txt
+
+            /usr/bin/time -v | zcat $dir/P10.read2.fastq.gz | sed -n '1~4p' \
+            | cut --delimiter=" " --fields=2 | cut --delimiter=":" --fields=4 \
+            | sort | uniq -c > read2_barcodes.txt
+
+        sbatch count_index.srun
+
+III. 10x Genomics Sequencing
+    "make every cell count"
+    A. How does the technology work
+    B. What are the sequencing parameters
+
+IV. CellRanger
+    Link: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger
+
+    A. 4 pipelines:
+        1. cellranger mkfastq - demultiplexes raw base call (BCL) files generated by Illumina sequencers into FASTQ files. 
+        2. cellranger count - takes FASTQ files from cellranger mkfastq and performs alignment, filtering, barcode counting, and UMI counting.
+        3. cellranger aggr - aggregates outputs from multiple runs of cellranger count, normalizing those runs to the same sequencing depth 
+                            and then recomputing the feature-barcode matrices and analysis on the combined data. 
+        4. cellranger reanalyze - takes feature-barcode matrices produced by cellranger count or cellranger aggr 
+                            and reruns the dimensionality reduction, clustering, and gene expression algorithms using tunable parameter settings
+
+----------------------
+|     10/13/2020     |
+----------------------
+
+Chromium Single Cell 30 Library & Gel Bead Kit v2
+26 bp Read1, 8 bp I7 Index and 98 bp Read2. 20000-50000 reads were obtained per cell.
+
+WORKFLOW:
+Single cell RNA-seq data were first analyzed by the Cell Ranger pipeline.
+The UMI counts from different samples were combined in Seurat for further analysis (see below)
+Cells expressing mOSN markers were further sub-clustered using a multi-kernel learning method, SIMLR (Wang et al., 2017). For OR expression analysis, only ORs with normalized expression above 2.5 we used.
+For the GO term analysis, GO terms used in the analysis were from GO.db (Carlson, 2018). The enrichment was calculated by Goseq (Young et al., 2010). Enriched GO terms were connected by their hierarchies from GO.db and converted into gexf format using the rgexf function.
+The GO term topographic map was visualized in Gephi (gephi.org). 
+KEGG pathway analysis was done using Pathview (Luo and Brouwer, 2013).
+
+STATISTICS:
+Differential expression was called using the Wilcoxen rank sum test for each of the three mOSN clusters versus the other two mOSN clusters using Seurat’s FindMarkers function.
+A Bonferroni correction was made based on the total number of genes in the dataset and was labeled as ‘‘p_val_adj’’ for the adjusted pvalue.
+The proportion of cells in the primary cluster showing any expression for a gene was labeled as ‘‘pct.1’’ and the proportion in the two other clusters combined was labeled as ‘‘pct.2.’’ The average log fold change between the groupings was labeled ‘‘avg_logFC’’ with a positive value denoting a higher level of expression in the primary cluster and a negative value indicating a decreased expression level relative to the other two clusters. Only genes that pass an adjusted p-value cutoff of 0.05 were included in the list.
+Data from Tan et al., 2016 were also used for the analysis. Differentially expressed genes were identified by two tailed Student’s t test. Genes with log2 fold change higher than 1 and log2 p-value larger than 5 were used to perform the GO term enrichment analysis.
+
+CELL RANGER
+Cell Ranger is a set of analysis pipelines that process Chromium single-cell RNA-seq output to align reads, generate feature-barcode matrices and perform clustering and gene expression analysis. Cell Ranger includes four pipelines relevant to single-cell gene expression experiments:
+•	mkfastq demultiplexes raw base call (BCL) files generated by Illumina sequencers into FASTQ files. It is a wrapper around Illumina's bcl2fastq, with additional useful features that are specific to 10x libraries and a simplified sample sheet format.
+•	count takes FASTQ files from cellranger mkfastq and performs alignment, filtering, barcode counting, and UMI counting. It uses the Chromium cellular barcodes to generate feature-barcode matrices, determine clusters, and perform gene expression analysis. The count pipeline can take input from multiple sequencing runs on the same GEM well. cellranger count also processes Feature Barcode data alongside Gene Expression reads.
+•	aggr aggregates outputs from multiple runs of cellranger count, normalizing those runs to the same sequencing depth and then recomputing the feature-barcode matrices and analysis on the combined data. The aggr pipeline can be used to combine data from multiple samples into an experiment-wide feature-barcode matrix and analysis.
+<- would this be useful in combating batch effect?
+•	reanalyze takes feature-barcode matrices produced by cellranger count or cellranger aggr and reruns the dimensionality reduction, clustering, and gene expression algorithms using tunable parameter settings.
+These pipelines combine Chromium-specific algorithms with the widely used RNA-seq aligner STAR. Output is delivered in standard BAM, MEX, CSV, HDF5 and HTML formats that are augmented with cellular information.
+
+MKFASTQ
+a pipeline that wraps Illumina's bcl2fastq and provides a number of convenient features in addition to the features of bcl2fastq:
+-	Translates 10x sample index names into the corresponding oligonucleotides in the sample index.
+-	Supports a simplified CSV samplesheet format to handle 10x use cases.
+-	Generates sequencing and 10x-specific quality control metrics, including barcode quality, accuracy, and diversity.
+-	Supports most bcl2fastq arguments, such as --use-bases-mask.
+Do we have a Simple CSV Samplesheet for running cellranger mkfastq?
+
+Example:
+Lane,Sample,Index
+1,test_sample,SI-TT-D9
+CODE:
+$ cellranger mkfastq --id=tiny-bcl \
+                     --run=/path/to/tiny_bcl \
+                     --csv=cellranger-tiny-bcl-simple-1.2.0.csv
+
+COUNT
+uses all of the cores available on your system to execute pipeline stages. 
+--localcores=16 will limit cellranger to using up to sixteen cores at once.
+ --localmem will restrict the amount of memory (in GB) used by cellranger.
+
+CODE:
+$ cellranger count --id=sample345 \
+                   --transcriptome=/opt/refdata-gex-GRCh38-2020-A \
+                   --fastqs=/home/jdoe/runs/HAWT7ADXX/outs/fastq_path \
+                   --sample=mysample \
+                   --expect-cells=1000 \
+                   --localcores=8 \
+                   --localmem=64
+
+AGGR
+Chemistry Batch Correction
+Aggregate Targeted Gene Expression Data
+Depth Normalization: automatically equalizes the average read depth per cell between groups before merging. This approach avoids artifacts that may be introduced due to differences in sequencing depth.
+
+REANALYZE
+PCA, nearest neighbors, TSNE
+For example, More Principal Components and Clusters
