@@ -833,7 +833,8 @@ AAGCAGTGGTATCAACGCAGAGTACATGGGAAAGACTTTGTTTTAAACTTTAAAACCAATTTAATAGTGGCAGTGGAATT
 AAGCAGTGGTATCAACGCAGAGTACATGGGGTAATGATCCAGGGCAGCGGAACGGGGTGACCCTGAGTATTGAGACCCTGCAGCGATGCTGAGCAGGTT
 AAGCAGTGGTATCAACGCAGAGTACATGGGGAGCTGGAGAGATGGCTCAGCCGTTAAAGGCTAGGCTCACAACCAAAAAAAAAAAAAAAAAAAAAAAAA
 
-
+zcat P10_S1_L001_R2_001.fastq.gz | sed -n '2~4p' | grep "^AAGCAGTGGTATCAACGCAGAGTACATGGG" | wc -l
+5042143
 
 Looking at per base sequence content, there appears to be higher A's and T's percentages in that order. Is there polyA contamination?
 
@@ -960,6 +961,49 @@ cd /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/raw_feature
 
     zcat matrix.mtx.gz | wc -l
     31891873
+
+----------------------
+|     10/25/2020     |
+----------------------
+
+perform trimming -> align to transcriptome -> see number of hits
+-> redo cellranger counts
+
+Matt already downloaded Cellranger version 4 in this location (/projects/bgmp/shared/groups/2020/neuron_nerds/CellRanger) already, but here is the command:
+    wget -O cellranger-4.0.0.tar.gz "https://cf.10xgenomics.com/releases/cell-exp/cellranger-4.0.0.tar.gz?Expires=1603687842&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9jZi4xMHhnZW5vbWljcy5jb20vcmVsZWFzZXMvY2VsbC1leHAvY2VsbHJhbmdlci00LjAuMC50YXIuZ3oiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE2MDM2ODc4NDJ9fX1dfQ__&Signature=n0BNaBJ6sPBgNd7lwZOCcYtJFHEQmzKshGjGl2E~AaRGGROu9Jk1i9dujdWjNmscnCKuTnXxZwXbZ~-l5SKLgmlM-QkC-jTQdd42V1fv0HsS3nQJZlobanaF57g2jnTh9JPF49naBKQ5sOlQ3y8Ok7-HfOTo8oDRR2BeG22SCcCg9tjCnJYiGDvJ5m-f1MfbJrkrRw72FZTiw2ISZcMD4MJDtptG1ciPrt5LV7EH2I50k3-aI7VvYIuvege4D0T~OqN86mDSlmjxPZpnF1-wi7oJKu64~fvMcnd74~W2hxYBFm~Uk27uIs1OtMevUo439GcwInrrgIPUrU-Hb~Bvyw__&Key-Pair-Id=APKAI7S6A5RYOXBWRPDA"
+
+pwd 
+/projects/bgmp/shared/groups/2020/neuron_nerds/chris
+
+nano cellrangerV4_counts.sh
+
+#!/usr/bin/env bash
+
+#SBATCH --job-name=cellrangerV4_count_%j
+#SBATCH --account=bgmp
+#SBATCH --partition=bgmp
+#SBATCH --output=cellrangerV4_count_%j.out
+#SBATCH --error=cellrangerV4_count_%j.err
+#SBATCH --time=1-23:59:59
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+
+conda activate bgmp_py37
+
+dir="/projects/bgmp/shared/groups/2020/neuron_nerds"
+
+/usr/bin/time -v \
+$dir/CellRanger/cellranger-4.0.0/bin/cellranger count \
+--id=Trimmed_count \
+--fastqs=$dir/THE_DATA/TRIMMED_FASTQs \
+--sample=P10Trimmed \
+--transcriptome=$dir/refdata-gex-mm10-2020-A \
+--localcores=8 \
+--localmem=64
+
+sbatch cellrangerV4_count.sh
 
 ----------------------
 |     10/26/2020     |
