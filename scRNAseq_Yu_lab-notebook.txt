@@ -12,8 +12,10 @@ Fall 2020
 
 Date        Description
 10/07/2020  Temporary Data Location; Data Exploration
-10/08/2020  Data Exploration II; 10x Genomics and CellRanger Information
-
+10/08/2020  Data Exploration II
+10/13/2020  Info on 10x Genomics, CellRanger, and Seurat
+10/16/2020  Run Cellranger Counts
+10/25/2020  Run FASTQC on fastq files
 
 ----------------------
 |     10/07/2020     |
@@ -644,3 +646,323 @@ nano count_test.srun
     --localmem=64
 
 sbatch count_test.srun
+
+** need to trim the last nucleotide off of read 1 says Max
+
+^ would we need to check for adapter trimming?
+
+sed '2~4s/(.)$//' myfile > newfile
+Translated that says: starting from line 2, substitute the first 4 characters every 4th line with nothing (i.e. remove them).
+
+zcat P10_S1_L001_R1_001.fastq.gz | head | sed '2~4s/[ATCGN]$//' | sed '4~4s/[!-J]$//'
+
+OUTPUT FROM CELLRANGER COUNT pipeline
+
+/gpfs/packages/cellranger/3.0.2/cellranger-cs/3.0.2/bin
+cellranger count (3.0.2)
+Copyright (c) 2019 10x Genomics, Inc.  All rights reserved.
+-------------------------------------------------------------------------------
+
+Martian Runtime - '3.0.2-v3.2.0'
+Serving UI at http://n225:42310?auth=niLJWFrDmPP5TRlOr2hF40fyb8gJ4Z1KwAwPmFe8QbA
+
+Running preflight checks (please wait)...
+2020-10-16 12:08:25 [runtime] (ready)           ID.P10_test.SC_RNA_COUNTER_CS.EXPAND_SAMPLE_DEF
+2020-10-16 12:08:25 [runtime] (run:local)       ID.P10_test.SC_RNA_COUNTER_CS.EXPAND_SAMPLE_DEF.fork0.chnk0.main
+2020-10-16 12:08:32 [runtime] (chunks_complete) ID.P10_test.SC_RNA_COUNTER_CS.EXPAND_SAMPLE_DEF
+Checking sample info...
+Checking FASTQ folder...
+Checking reference...
+Checking reference_path (/projects/bgmp/shared/groups/2020/neuron_nerds/refdata-gex-mm10-2020-A) on n225...
+Checking chemistry...
+Checking optional arguments...
+mrc: '3.0.2-v3.2.0'
+
+mrp: '3.0.2-v3.2.0'
+
+Anaconda: Python 2.7.14 :: Anaconda, Inc.
+
+numpy: 1.14.2
+
+scipy: 1.0.1
+
+pysam: 0.14.1
+
+h5py: 2.8.0
+
+pandas: 0.22.0
+
+STAR: STAR_2.5.1b
+
+samtools: samtools 1.7
+Using htslib 1.7
+Copyright (C) 2018 Genome Research Ltd.
+
+2020-10-16 12:08:33 [runtime] (ready)           ID.P10_test.SC_RNA_COUNTER_CS.SC_RNA_COUNTER.DISABLE_FEATURE_STAGES
+...
+
+Outputs:
+- Run summary HTML:                         /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/web_summary.html
+- Run summary CSV:                          /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/metrics_summary.csv
+- BAM:                                      /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/possorted_genome_bam.bam
+- BAM index:                                /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/possorted_genome_bam.bam.bai
+- Filtered feature-barcode matrices MEX:    /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/filtered_feature_bc_matrix
+- Filtered feature-barcode matrices HDF5:   /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/filtered_feature_bc_matrix.h5
+- Unfiltered feature-barcode matrices MEX:  /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/raw_feature_bc_matrix
+- Unfiltered feature-barcode matrices HDF5: /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/raw_feature_bc_matrix.h5
+- Secondary analysis output CSV:            /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/analysis
+- Per-molecule read information:            /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/molecule_info.h5
+- CRISPR-specific analysis:                 null
+- Loupe Cell Browser file:                  /projects/bgmp/shared/groups/2020/neuron_nerds/test/P10_test/outs/cloupe.cloupe
+
+Waiting 6 seconds for UI to do final refresh.
+Pipestance completed successfully!
+
+2020-10-16 17:20:18 Shutting down.
+Saving pipestance info to P10_test/P10_test.mri.tgz
+
+----------------------
+|     10/22/2020     |
+----------------------
+
+Objective: How to run rstudio in talapas
+description: copy of meeting notes with Pete 
+
+Create an interactive node by entering talapas-ln1.uoregon.edu in web browser
+Select talapas desktop under interactive apps dropdown
+Submit number of resources needed
+Launch  noVNC in new tab
+Open terminal from the icon in the top left
+
+ml rstudio
+module spider R
+ml <latest version>
+rstudio
+
+Download packages which should live in your environment
+
+Next, reviewed the results from Cellranger counts with Pete:
+Overall, everything is as expected
+Saturation should be greater than 90% (but okay if it isn’t). Saturation means the number of duplicate reads 
+The assay is optimized for 10K cells
+It is okay that the version number are different between ours and the Yu lab’s (Pete would use the latest version)
+We can take the filtered and raw counts into seurat (Pete takes the raw counts)
+
+Suggestions:
+- Email Max to ask why we have less reads than what is in their html file
+- Possibly run fastq files through FASTQC?
+- Align raw reads to genome to see if reads are aligning to more than one place
+    - Because cellranger count does not save reads that map to more than one place
+- Explore differences between filtered and raw counts
+- Run both through seurat
+
+----------------------
+|     10/25/2020     |
+----------------------
+
+Objective: Run FASTQC on fastq files
+
+/projects/bgmp/shared/groups/2020/neuron_nerds/chris
+
+# log onto Talapas
+ssh cchua@talapas-ln1.uoregon.edu
+
+# set-up an interactive run in Talapas
+srun --account=bgmp --partition=bgmp --nodes=1 --ntasks-per-node=1 \
+--time=2:00:00 --cpus-per-task=1 --pty bash
+
+# activate base
+conda activate bgmp_py37
+
+# load module to check for dependencies
+module load fastqc/0.11.5
+
+# make a directory for fastqc files
+mkdir fastqc_output
+cd fastqc_output
+
+# create slurm script for 11_2H
+nano fastqc_P10_untrimmed.srun
+
+#!/bin/bash
+#SBATCH --account=bgmp
+#SBATCH --partition=bgmp
+#SBATCH --job-name=fastqc_P10_untrimmed_%j
+#SBATCH --output=fastqc_P10_untrimmed_%j.out
+#SBATCH --error=fastqc_P10_untrimmed_%j.err
+#SBATCH --time=1-23:59:59
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=6
+
+module load fastqc/0.11.5
+
+dir1="/projects/bgmp/shared/groups/2020/neuron_nerds/THE_DATA"
+dir2="/projects/bgmp/shared/groups/2020/neuron_nerds/chris"
+
+/usr/bin/time -v fastqc \
+-o $dir2/fastqc_output/ \
+--noextract \
+-f fastq \
+-t 6 \
+$dir1/P10_S1_L001_R1_001.fastq.gz \
+$dir1/P10_S1_L001_R2_001.fastq.gz
+
+sbatch fastqc_P10_untrimmed.srun
+
+Looking at the overrepresented sequences, there appears to be contamination of a repetative sequence
+
+Sequence	Count	Percentage	Possible Source
+AAGCAGTGGTATCAACGCAGAGTACATGGGAGGCATTCAGGCAGCGAGAG	350540	0.1316592539071322	No Hit
+AAGCAGTGGTATCAACGCAGAGTACATGGGGAGGCATTCAGGCAGCGAGA	278293	0.10452401651046256	No Hit
+
+It's adapter contamination, 30-bp TSO sequence: 
+AAGCAGTGGTATCAACGCAGAGTACATGGG
+AAGCAGTGGTATCAACGCAGAGTACATGGGAAGCAGTGGTATCAACGCAG
+AAGCAGTGGTATCAACGCAGAGTACATGGG AAGCAGTGGTATCAACGCA
+
+zcat P10_S1_L001_R2_001.fastq.gz | sed -n '2~4p' | grep "^AAGCAGTGGTATCAACGCAGAGTACATGGG" | head
+AAGCAGTGGTATCAACGCAGAGTACATGGGAACCCACTAACACACTATAGCAGTACTTTTATAAAGCAGGACAAAAGACAATATCTACATGGTGCTAAA
+AAGCAGTGGTATCAACGCAGAGTACATGGGAGATGACAAAGTACCTTGGACTGAATCACACGGAGACAGCATTTTGAGCAGAACGCAGGCTAAACTCTT
+AAGCAGTGGTATCAACGCAGAGTACATGGGATCTGCTGGAGTTCTACGTTTTTATGTAAGCATGAAACACAGGCAGTGTGAGAGAAAGCCAGGACCCGA
+AAGCAGTGGTATCAACGCAGAGTACATGGGGCTCTCTTGCTCTGCGCTCTGACGCTCTGGCGCTCTGGCTTCTAGAGATGTAAGCGGGGGGCTTTCGTT
+AAGCAGTGGTATCAACGCAGAGTACATGGGGACTTTGGATAGTCAGTGAAGGTTAAATCCTGCTGTCAGAAACTCCCCTGCTGTTCGAATTTTTCTTAC
+AAGCAGTGGTATCAACGCAGAGTACATGGGAAGGTGAAGAAAAAGCTGTTAGAGAAGATAGGAAAATAGAAGACAAAGCATCTTTAGAAGACAGAAAAG
+AAGCAGTGGTATCAACGCAGAGTACATGGGGTGTTTCAGGAGAGCTAGGGGTACACAGAAAGACTTACCTGAAACCATACTGCCGAAATAAGGGGGCGG
+AAGCAGTGGTATCAACGCAGAGTACATGGGAAAGACTTTGTTTTAAACTTTAAAACCAATTTAATAGTGGCAGTGGAATTTGAATCTTGTTCACAAATC
+AAGCAGTGGTATCAACGCAGAGTACATGGGGTAATGATCCAGGGCAGCGGAACGGGGTGACCCTGAGTATTGAGACCCTGCAGCGATGCTGAGCAGGTT
+AAGCAGTGGTATCAACGCAGAGTACATGGGGAGCTGGAGAGATGGCTCAGCCGTTAAAGGCTAGGCTCACAACCAAAAAAAAAAAAAAAAAAAAAAAAA
+
+
+
+Looking at per base sequence content, there appears to be higher A's and T's percentages in that order. Is there polyA contamination?
+
+zcat P10_S1_L001_R2_001.fastq.gz | sed -n '2~4p' | grep "AAAAAAAAAAAAAAAAA$" | head
+ATTGTACCTATTTTGTATATGTGAGATGTTTAAATAAATTGTGAAAAATAAAATAAAGCATTTTGGTTTTCCAAAAGAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+GCTTATTCAAAAGAACTTCTCTAAAGCTCCCTGCTTTTTTAGAGTGGGACTAAGGCCCACAATCTACAGCCACTTTCACAAAAAAAAAAAAAAAAAAAA
+GAAACTAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+GTCAGTCTTGTTCCATCCTGTCCTGAGGGCCCCCACTCTGTCTCCTCTGCTCTTTCTAATAAACAGCAGTTGCATTAAAAAAAAAAAAAAAAAAAAAAA
+ATTTGTGAATGGAATGCCTTGTAATATGAATGTTAATATAATATGTAAAGGGAGATTAAACGTTTGAATGATTATCCCAAAAAAAAAAAAAAAAAAAAA
+GGCCCTGGCTTTAGGTTGTCAGGGGATTAAACAGCTTTTCATACTCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ACTGCTGCCTCCTCAGCCATTATAGATTGTAACCTCTGAAACCGTGAGCCAAAATAAACCTTACCTCCCTTGAAAAAAAAAAAAAAAAAAAAAAAAAAA
+CCTATTCTCTGGGGGAATTTGAAGAAATGCTTGAATATTTCCAGTACTGGGAACAAATAAATAACACTATAATTTTCAAAAAAAAAAAAAAAAAAAAAA
+GCTGTAGAAACTTCTGTCGCCCTGGGTAGAGTAAATTTTTTAAATGGCTAAGATATTACAGACACTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+zcat P10_S1_L001_R2_001.fastq.gz | sed -n '2~4p' | grep "AAAAAAAAAAAAAAAAA$" | wc -l
+3817785
+
+https://github.com/10XGenomics/cellranger/issues/46
+"In CellRanger v4 they have actually changed the behviour-- "When analyzing 3’ Gene Expression data, 
+Cell Ranger 4.0 trims the template switch oligo (TSO) sequence from the 5’ end of Read-2 and 
+the poly-A sequence from the 3’ end before aligning reads to the reference transcriptome. 
+This behavior is different from Cell Ranger 3.1, which does not perform any trimming.
+
+A full length cDNA molecule is normally flanked by the 30-bp TSO sequence, AAGCAGTGGTATCAACGCAGAGTACATGGG, 
+at the 5' end and the poly-A sequence at the 3' end. Some fraction of sequencing reads are expected to 
+contain either or both of these sequences, depending on the fragment size distribution of the library. 
+Reads derived from short RNA molecules are more likely to contain either or both TSO and poly-A sequence than longer RNA molecules.
+
+Trimming results in better alignment, with the fraction of reads mapped to a gene increasing by up to 1.5%, 
+because the presence of non-template sequence in the form of either TSO or poly-A confounds read mapping. 
+Trimming improves the sensitivity of the assay as well as the computational efficiency of the pipeline. 
+Tags ts:i and pa:i in the output BAM files indicate the number of TSO nucleotides trimmed from the 5' end 
+of Read-2 and the number of poly-A nucleotides trimmed from the 3' end. The trimmed bases are present in 
+the sequence of the BAM record and are soft clipped in the CIGAR string.
+
+Below, we illustrate how the fraction of reads mapped confidently to the transcriptome varies for both 
+trimmed and untrimmed alignment as a function of read-length for a variety of sample types." 
+https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/release-notes"
+
+conclusions:
+adapter/polyA contamination. Is there so much that we need to trim and redo counts?
+
+----------------------
+|     10/25/2020     |
+----------------------
+
+Objective: Explore difference between raw and filtered counts matrix
+
+less trimmed_count_13250720.err
+    Command being timed: "cellranger count --id=Trimmed_count --fastqs=/projects/bgmp/shared/groups/2020/neuron_nerds/THE_DATA/TRIMMED_FASTQs --sample=P10Trimmed --transcriptome=/projects/bgmp/shared/groups/2020/neuron_nerds/refdata-gex-mm10-2020-A --localcores=8 --localmem=64"
+        User time (seconds): 98237.60
+        System time (seconds): 4029.19
+        Percent of CPU this job got: 580%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 4:53:31
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 12569408
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 617113875
+        Voluntary context switches: 88025920
+        Involuntary context switches: 419972
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 144
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+tail -20 trimmed_count_13250720.out
+    Outputs:
+    - Run summary HTML:                         /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/web_summary.html
+    - Run summary CSV:                          /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/metrics_summary.csv
+    - BAM:                                      /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/possorted_genome_bam.bam
+    - BAM index:                                /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/possorted_genome_bam.bam.bai
+    - Filtered feature-barcode matrices MEX:    /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/filtered_feature_bc_matrix
+    - Filtered feature-barcode matrices HDF5:   /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/filtered_feature_bc_matrix.h5
+    - Unfiltered feature-barcode matrices MEX:  /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/raw_feature_bc_matrix
+    - Unfiltered feature-barcode matrices HDF5: /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/raw_feature_bc_matrix.h5
+    - Secondary analysis output CSV:            /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/analysis
+    - Per-molecule read information:            /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/molecule_info.h5
+    - CRISPR-specific analysis:                 null
+    - Loupe Cell Browser file:                  /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/cloupe.cloupe
+
+    Waiting 6 seconds for UI to do final refresh.
+    Pipestance completed successfully!
+
+    2020-10-17 20:34:49 Shutting down.
+    Saving pipestance info to Trimmed_count/Trimmed_count.mri.tgz
+
+cd /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/filtered_feature_bc_matrix
+
+    zcat barcodes.tsv.gz | head -1
+    AAACCTGAGCATGGCA-1
+
+    zcat features.tsv.gz | head -1
+    ENSMUSG00000051951      Xkr4    Gene Expression
+
+    zcat matrix.mtx.gz | head -3
+    %%MatrixMarket matrix coordinate integer general
+    %metadata_json: {"format_version": 2, "software_version": "3.0.2"}
+    32285 9031 15711877
+
+    zcat matrix.mtx.gz | wc -l
+    15711880
+
+cd /projects/bgmp/shared/groups/2020/neuron_nerds/Trimmed_count/outs/raw_feature_bc_matrix
+
+    zcat barcodes.tsv.gz | head -1
+    AAACCTGAGAAACCAT-1
+
+    zcat features.tsv.gz | head -1
+    ENSMUSG00000051951      Xkr4    Gene Expression
+
+    zcat matrix.mtx.gz | head -3
+    %%MatrixMarket matrix coordinate integer general
+    %metadata_json: {"format_version": 2, "software_version": "3.0.2"}
+    32285 737280 31891870
+
+    zcat matrix.mtx.gz | wc -l
+    31891873
+
+----------------------
+|     10/26/2020     |
+----------------------
+
+Objective: Run raw and filtered counts through seurat
