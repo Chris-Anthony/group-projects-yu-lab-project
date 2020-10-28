@@ -16,6 +16,7 @@ Date        Description
 10/13/2020  Info on 10x Genomics, CellRanger, and Seurat
 10/16/2020  Run Cellranger Counts
 10/25/2020  Run FASTQC on fastq files
+10/26/2020  Run v4 trimmed raw and filtered counts through seurat on talapas
 
 ----------------------
 |     10/07/2020     |
@@ -1005,8 +1006,87 @@ $dir/CellRanger/cellranger-4.0.0/bin/cellranger count \
 
 sbatch cellrangerV4_count.sh
 
+ tail -20 cellrangerV4_count_13393123.out
+Outputs:
+- Run summary HTML:                         /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/web_summary.html
+- Run summary CSV:                          /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/metrics_summary.csv
+- BAM:                                      /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/possorted_genome_bam.bam
+- BAM index:                                /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/possorted_genome_bam.bam.bai
+- Filtered feature-barcode matrices MEX:    /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/filtered_feature_bc_matrix
+- Filtered feature-barcode matrices HDF5:   /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/filtered_feature_bc_matrix.h5
+- Unfiltered feature-barcode matrices MEX:  /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/raw_feature_bc_matrix
+- Unfiltered feature-barcode matrices HDF5: /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/raw_feature_bc_matrix.h5
+- Secondary analysis output CSV:            /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/analysis
+- Per-molecule read information:            /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/molecule_info.h5
+- CRISPR-specific analysis:                 null
+- Loupe Browser file:                       /projects/bgmp/shared/groups/2020/neuron_nerds/chris/Trimmed_count/outs/cloupe.cloupe
+- Feature Reference:                        null
+- Target Panel File:                        null
+
+Waiting 6 seconds for UI to do final refresh.
+Pipestance completed successfully!
+
+2020-10-25 14:29:57 Shutting down.
+
+compared to v3, v4 has 20 less cells detected and 15 less genes per cell, but about 60 more reads per cell.
+We got higher sequencing saturation by 1% and 0.3% more mapped to the genome with 0.4% greater confidence. 
+Most importantly, we got tighter clusters. 
+
+Used the v4 counts for seurat
+
 ----------------------
 |     10/26/2020     |
 ----------------------
 
 Objective: Run raw and filtered counts through seurat
+
+interactive desktop
+
+ml rstudio
+module spider R
+ml R/4.0.2
+rstudio
+
+saved rmarkdown as "analyze_counts" in my folder
+
+install.packages("dplyr")
+install.packages("Seurat")
+install.packages("patchwork")
+
+followed the vignette here:https://satijalab.org/seurat/v3.2/pbmc3k_tutorial.html
+
+used 20 clusters
+
+see rmarkdown html file for more information
+
+to-do: 
+- see if results correlate with what Alyx got
+- see of the clusters have biological significance
+
+----------------------
+|     10/27/2020     |
+----------------------
+
+Email from Max:
+
+"The P10 subset of our age-wise olfactory epithelial RNA-seq data is unique in that it contains FASTQ files from two flow-cells. 
+Previously, I included reads from only one flow cell...The newly uploaded files in the OneDrive folder are concatenated across both lanes in both flow-cells."
+
+--> need to consider batch effect now
+
+http://www.bioconductor.org/packages/release/bioc/html/batchelor.html 
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("batchelor")
+
+https://rdrr.io/bioc/batchelor/man/mnnCorrect.html
+
+library(batchelor)
+
+B1 <- matrix(rnorm(10000), ncol=50) # Batch 1 
+B2 <- matrix(rnorm(10000), ncol=50) # Batch 2
+out <- mnnCorrect(B1, B2) # corrected values
+
+waiting for Max to finish the sync with the google drive.
