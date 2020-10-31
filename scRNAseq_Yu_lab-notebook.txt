@@ -1090,3 +1090,84 @@ B2 <- matrix(rnorm(10000), ncol=50) # Batch 2
 out <- mnnCorrect(B1, B2) # corrected values
 
 waiting for Max to finish the sync with the google drive.
+
+----------------------
+|     10/31/2020     |
+----------------------
+
+Redid counts on the full dataset
+
+pwd 
+/projects/bgmp/shared/groups/2020/neuron_nerds/chris
+
+nano counts_fulldata.sh
+
+#!/usr/bin/env bash
+
+#SBATCH --job-name=counts_fulldata_%j
+#SBATCH --account=bgmp
+#SBATCH --partition=bgmp
+#SBATCH --output=counts_fulldata_%j.out
+#SBATCH --error=counts_fulldata_%j.err
+#SBATCH --time=1-23:59:59
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+
+conda activate bgmp_py37
+
+dir="/projects/bgmp/shared/groups/2020/neuron_nerds"
+
+/usr/bin/time -v \
+$dir/CellRanger/cellranger-4.0.0/bin/cellranger count \
+--id=full_count \
+--fastqs=$dir/full_data/TrimmedFull \
+--sample=L35291_Trimmed \
+--transcriptome=$dir/refdata-gex-mm10-2020-A \
+--localcores=8 \
+--localmem=64
+
+sbatch counts_fulldata.sh
+
+
+tail -20 counts_fulldata_13541616.out
+Outputs:
+- Run summary HTML:                         /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/web_summary.html
+- Run summary CSV:                          /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/metrics_summary.csv
+- BAM:                                      /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/possorted_genome_bam.bam
+- BAM index:                                /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/possorted_genome_bam.bam.bai
+- Filtered feature-barcode matrices MEX:    /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/filtered_feature_bc_matrix
+- Filtered feature-barcode matrices HDF5:   /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/filtered_feature_bc_matrix.h5
+- Unfiltered feature-barcode matrices MEX:  /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/raw_feature_bc_matrix
+- Unfiltered feature-barcode matrices HDF5: /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/raw_feature_bc_matrix.h5
+- Secondary analysis output CSV:            /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/analysis
+- Per-molecule read information:            /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/molecule_info.h5
+- CRISPR-specific analysis:                 null
+- Loupe Browser file:                       /projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/cloupe.cloupe
+- Feature Reference:                        null
+- Target Panel File:                        null
+
+Waiting 6 seconds for UI to do final refresh.
+Pipestance completed successfully!
+
+2020-10-31 05:10:08 Shutting down.
+
+Biggest changes were:
+increased estimated number of cells: 9,149
+increased mean reads per cell: 38,189
+increased total genes detected: 23,280
+
+Now going to take the filtered counts into seurat
+/projects/bgmp/shared/groups/2020/neuron_nerds/chris/full_count/outs/filtered_feature_bc_matrix
+
+conda activate bgmp_py37
+ml rstudio
+ml R/4.0.2
+rstudio
+
+is the feature violin plot supposed to look bimodal?
+look up geom_boxplot
+removed dots from violin plot
+MT-> mt
+upped the number of features from 2500 to 5000 in the filter step
