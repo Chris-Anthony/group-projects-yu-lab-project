@@ -1171,3 +1171,300 @@ look up geom_boxplot
 removed dots from violin plot
 MT-> mt
 upped the number of features from 2500 to 5000 in the filter step
+
+----------------------
+|     11/01/2020     |
+----------------------
+
+conda activate bgmp_py37
+ml rstudio
+ml R/4.0.2
+rstudio
+
+https://satijalab.org/seurat/v3.2/pbmc3k_tutorial.html 
+
+1. The number of unique genes detected in each cell.
+    a. Low-quality cells or empty droplets will often have very few genes
+    b. Cell doublets or multiplets may exhibit an aberrantly high gene count
+2. Similarly, the total number of molecules detected within a cell (correlates strongly with unique genes)
+3. The percentage of reads that map to the mitochondrial genome
+    a. Low-quality / dying cells often exhibit extensive mitochondrial contamination
+    b. We calculate mitochondrial QC metrics with the PercentageFeatureSet function, which calculates the percentage of counts originating from a set of features
+    c. We use the set of all genes starting with MT- as a set of mitochondrial genes
+
+https://kb.10xgenomics.com/hc/en-us/articles/360001086611-Why-do-I-see-a-high-level-of-mitochondrial-gene-expression-
+
+This Technical Note discusses the impact of non-viable cells in single cell suspensions on single cell genomics data quality. 10x Genomics' Single Cell Protocols 
+require suspensions of viable, single cells as input. The removal of dead cells and other contaminants from single cell suspensions is critical to obtaining 
+high quality data. Depending on the sample type and sample preparation method, the fraction of dead cells in a single cell suspension can vary significantly. 
+Dead cells easily lyse, resulting in the release of ambient RNA. This cell-free RNA can contribute to the background noise of the assay and will compromise 
+the quality of single cell data. In this Technical Note we compare datasets generated from single cell suspensions containing varying amounts of non-viable 
+cells to highlight the importance of removing dead cells from single cell suspensions prior to use with the Single Cell 3’ v2 Protocol.
+
+https://pair-code.github.io/understanding-umap/
+
+The most important parameter is n_neighbors - the number of approximate nearest neighbors used to construct the initial high-dimensional graph. 
+It effectively controls how UMAP balances local versus global structure - low values will push UMAP to focus more on local structure by constraining 
+the number of neighboring points considered when analyzing the data in high dimensions, while high values will push UMAP towards representing the 
+big-picture structure while losing fine detail.
+
+The second parameter we’ll investigate is min_dist, or the minimum distance between points in low-dimensional space. 
+This parameter controls how tightly UMAP clumps points together, with low values leading to more tightly packed embeddings. 
+Larger values of min_dist will make UMAP pack points together more loosely, focusing instead on the preservation of the broad topological structure.
+
+Questions:
+1. How to choose the mitochondrial cutoffs? 
+2. How to choose the number of clusters?
+
+----------------------
+|     11/03/2020     |
+----------------------
+
+Meeting with Annie 
+
+mitchondrial cutoff can be 10, can try 20
+look at the marker genes and label clusters
+clustering <- need to schedule a meeting with Ron
+bioarchive mouse epithelial single cell; marker genes 
+sctransform vignette (on the seurat page) <- do not need to do normalize, etc. 
+need to check doublet and ambient RNA contamination
+
+----------------------
+|     11/04/2020     |
+----------------------
+
+filtered vs. raw (Matt and Alyx are playing around with the raw counts)
+
+use dims = 50 as a param in Jackstraw and ScoreJackStraw
+-> elbow plot still did not level out
+
+try 100?
+100 crashed
+trying 80
+80 crashed
+trying 50
+
+percent.mt: 5, 10, 20
+w/ and w/o doubletfinder
+
+ml rstudio
+ml R/4.0.2
+rstudio
+
+5 done
+
+----------------------
+|     11/05/2020     |
+----------------------
+
+10 done
+20 done
+
+now trying with raw?
+mt 5
+mt 10 done
+mt 20 done
+
+----------------------
+|     11/05/2020     |
+----------------------
+
+finishing up raw mt 5
+
+need to try doubletfinder
+
+----------------------
+|     11/10/2020     |
+----------------------
+
+Trying to figure out labeling cells
+
+http://bioconductor.org/packages/release/bioc/html/AnnotationHub.html
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("AnnotationHub")
+
+library(AnnotationHub)
+
+BiocManager::install("ensembldb")
+library(ensembldb)
+
+https://hbctraining.github.io/scRNA-seq/lessons/fetching_annotations.html
+
+# Connect to AnnotationHub
+ah <- AnnotationHub()
+
+# Access the Ensembl database for organism
+ahDb <- query(ah, 
+              pattern = c("Homo sapiens", "EnsDb"), 
+              ignore.case = TRUE)
+
+# Acquire the latest annotation files
+id <- ahDb %>%
+        mcols() %>%
+        rownames() %>%
+        tail(n = 1)
+
+# Download the appropriate Ensembldb database
+edb <- ah[[id]]
+
+# Extract gene-level information from database
+annotations <- genes(edb, 
+                     return.type = "data.frame")
+
+# Select annotations of interest
+annotations <- annotations %>%
+        dplyr::select(gene_id, gene_name, seq_name, gene_biotype, description)
+
+https://hbctraining.github.io/scRNA-seq/lessons/09_merged_SC_marker_identification.html
+
+gave up on learning about clusters from the descriptions
+
+seeing which clusters have my biomarkers and sorting them by that
+
+could possibly use this:
+
+BuildClusterTree(object = object, 
+                 genes.use = object@var.genes, 
+                 do.plot = TRUE, 
+                 do.reorder = TRUE, 
+                 reorder.numeric = TRUE,
+                 show.progress = TRUE)
+
+PlotClusterTree
+
+^ if the above works, can use StackedVlnPlit to overlay violin plot
+
+----------------------
+|     11/11/2020     |
+----------------------
+
+In the end used violin plots and excel to make best guess
+
+SCT is the best, followed by 10, 20, 5.
+20 - clustering by mitochondrial genes
+5 - not enough information 
+
+https://rpubs.com/DarrenVan/628853
+stacked violinplots
+
+----------------------
+|     11/13/2020     |
+----------------------
+
+https://bioinformatics.stackexchange.com/questions/4297/resolution-parameter-in-seurats-findclusters-function-for-larger-cell-numbers
+
+
+----------------------
+|     11/16/2020     |
+----------------------
+
+testing new parameters
+see meeting notes
+
+SCTransform after subsetting mt.percent 5-10%
+Percent.mt cutoffs:
+    2% - Alyx
+    2.5% - Alyx
+    5% - Matt
+    7.5% - Matt
+    10% - Chris
+    20% - Chris
+Look for other cell markers in the literature - Alyx
+    Connective tissue 
+        fibronectin, fgf? 
+        fibroblasts?
+    Olfactory sheathing cells?
+        S100a5
+        S100a6
+    Lamina propria
+        ATF7
+        ACPA2
+        FABP7	
+Top genes analysis for unknown clusters (UND) - Chris
+Cell trajectory analysis - Matt, differences between tools
+    Slingshot
+    Monocle3
+
+Do not need to do SIMLR. No need for GO/KEGG analysis?
+Use soupx to remove ambient RNA?
+    Good when analyzing raw counts matrix
+
+----------------------
+|     12/02/2020     |
+----------------------
+
+It looks like having the mitochondrial contamination cutoff did not help improve the clustering
+Looking at the annotated top 10 genes, it looks like we might have immune cells () and sus-similar cells (krt18, cyp2g1, cyp1a5). Might be able to use the s100a5 markers
+
+Monocle3 is easier to use than slingshot and the satjia lab already has a vignette on this.
+
+https://github.com/satijalab/seurat/issues/1658
+https://satijalab.org/signac/articles/monocle.html
+
+----------------------
+|     12/04/2020     |
+----------------------
+
+How is RNA Velocity different from Cell Trajectory? Velocity includes time/rate
+
+RNA Velocity
+    https://velocyto.org/velocyto.py/tutorial/cli.html#run10x-run-on-10x-chromium-samples
+
+Good tools for GO/KEGG: 
+    Panther (newer), 
+    David (for GO terms; older, easier to use, smaller datasets needed within the cell cluster)
+
+Finding unknown cluster ID’s:
+    Extract the cluster and rerun through the pipeline
+    Gene enrichment comparisons: pct1/pct2 - look for big numbers?
+    Get the top all genes for that cluster:
+    PCT1 : the percent of cells in that cluster that express that marker
+    Check for pct >85%?
+    PCT2: percentage of all other cells combined that express that marker
+    Take that cluster’s ratio as “cluster gene IDs”
+    Could multiply this ratio by the avg_logFC
+    Average Expression Table
+    Gene ID, Cluster ID
+    Has every gene that is expressed in any cluster, normalized so that sum of each column (cluster 0) adds up to 10000
+    Reads per 10000 instead of reads per million to normalize expression values
+    Good for getting a “first glance”
+    Max(per column) finds the most expressed gene in each cluster
+    Doesn’t compare against other clusters, just within cluster
+    Create a percentage for each gene based on average expression within cluster
+
+    https://rdrr.io/github/satijalab/seurat/man/AverageExpression.html
+
+Exporting dataframes from R as an excel table
+    https://www.statmethods.net/input/exportingdata.html
+
+    library(xlsx)
+    write.xlsx(mydata, "c:/mydata.xlsx")
+
+----------------------
+|     12/06/2020     |
+----------------------
+
+Dr. Yu is concerned about the prevalence of OMP in the cell clusters. Suggests using SoupX
+
+SoupX - https://rdrr.io/cran/SoupX/f/vignettes/pbmcTutorial.Rmd
+
+Figured out how to use VLOOKUP in excel:
+http://biocc.hrbmu.edu.cn/CellMarker/
+
+found markers to differentiate UND clusters:
+
+Potential Cell: Type	Marker 1	Marker 2	Marker 3	Marker 4	Marker 5	
+Late activated neural stem cell:	Top2a	Neurod1				
+chandelier cell/osteogenic cell:	Spp1	Ibsp	Col1a1	Bglap	Col1a2	
+Type II spiral ganglion neuron:	Cd74	H2-Aa	H2-Ab1			
+Mural Cell:	Rgs5	Acta2	Myl9			
+Endothelial cell:	Ctla2a	Aplnr	Flt1	Clec14a		
+Adipose tissue:	Sfrp2	Col3a1	Dcn	Lum	Col1a1	Col1a2	
+Neural stem cell/Olfactory ensheathing glia:	Fabp7	Plp1	Apoe			
+lymphocyte (Lacrimal gland):	Cxcr6	Cd3g	Trbc2	Cd3d	Ptprcap	
+
+
+
