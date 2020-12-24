@@ -1466,5 +1466,53 @@ Adipose tissue:	Sfrp2	Col3a1	Dcn	Lum	Col1a1	Col1a2
 Neural stem cell/Olfactory ensheathing glia:	Fabp7	Plp1	Apoe			
 lymphocyte (Lacrimal gland):	Cxcr6	Cd3g	Trbc2	Cd3d	Ptprcap	
 
+----------------------
+|     12/23/2020     |
+----------------------
 
+Objective: RNA Velocity
 
+http://velocyto.org/
+https://jef.works/blog/2020/01/14/rna_velocity_analysis_tutorial_tips/
+
+download openmp and boost packages in my conda environment in the ubuntu terminal
+conda install -c conda-forge openmpi
+conda install -c conda-forge boost
+
+in R terminal
+install.packages("devtools")
+
+restart R
+library(devtools)
+install_github("velocyto-team/velocyto.R")
+
+Error: Failed to install 'velocyto.R' from GitHub:
+    (converted from warning) package 'pcaMethods' is not available (for R version 4.0.2)
+
+BiocManager::install("pcaMethods")
+^ this updated seurat and sctransform
+
+retried install_github(velocyto)
+
+Error: Failed to install 'velocyto.R' from GitHub:
+    (converted from warning) installation of package 'hdf5r' had non-zero exit status
+
+retried install_github(velocyto)
+
+These packages have more recent versions available.
+It is recommended to update all of them.
+Which would you like to update? 
+
+1: All
+2: CRAN packages only
+3: None
+4: igraph (1.2.5 -> 1.2.6) [CRAN]
+
+install.packages("igraph")
+
+Error: package or namespace load failed for 'igraph' in dyn.load(file, DLLpath = DLLpath, ...)
+    unable to load shared object '/gfs/home/cchua/R/x86_64-pc-linux/4.0/...
+    libicuil8n.so.58: cannot open shared object file: No such file or directory
+
+might need a new compiler because R version is too recent
+re: https://github.com/igraph/rigraph/issues/213
