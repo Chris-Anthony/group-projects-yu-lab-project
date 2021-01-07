@@ -1516,3 +1516,237 @@ Error: package or namespace load failed for 'igraph' in dyn.load(file, DLLpath =
 
 might need a new compiler because R version is too recent
 re: https://github.com/igraph/rigraph/issues/213
+
+
+01/04/2021
+
+https://github.com/velocyto-team/velocyto.R/pull/43
+
+01/05/2021
+
+meeting with Jason and Pete to resolve the environment
+
+alyx's error when installing using bioconductor::rhd5f
+ERROR: unable to lcoate HDF5 compilation helper scripts 'h5cc' or 'h5pcc'
+
+ml rstudio
+ml R/4.0.2
+
+conda install -c conda-forge openmpi <- already installed
+conda install -c conda-forge boost <- already installed
+conda install -c bioconda bioconductor-rhdf5 <--- new
+
+library(devtools)
+install_github("velocyto-team/velocyto.R")
+
+Unable to locate HDF5 compilation helper scripts 'h5cc' pr 'h5pcc'.
+Please specify --with-hdf5=<LOCATION> as the full path to h5cc or h5pcc
+
+sudo apt-get install libhdf5-dev
+
+Pete's suggestion
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("rhdf5")
+
+"The downloaded source packages are in 
+    '/tmp/Rtmp55YI7F/downloaded-packages'
+Installation path not writeable, unable to update packages: ade4, backports, bibtex, bit64, broom, callr, car, cli, clipr,
+    clusterGeneration, coda, codetools, colorspace, colourpicker, config, conquer, covr, cowplot, cppll, data.table, dbplyr,
+    ...
+
+same error 
+
+# no cross talk between ml and env?
+new terminal
+which R
+/bin/R
+
+which conda
+/projects/bgmp/cchua/miniconda3/bin/conda
+
+conda activate bgmp_pmy37
+which R
+/projects/bgmp/cchua/miniconda3/envs/bgmp_py37/bin/R
+
+which conda
+
+R packages live in in packages
+conda packages live in conda
+
+Create velocyto specific environment
+conda create --name SomeName
+conda config --add channels conda-forge
+conda search r-base
+#^ will show you all the versions of R you can choose
+conda install r-base=x.y.z
+
+created bgmp_R
+
+need to load all dependecies first in conda before install packages in R <-- THIS IS KEY*****
+conda install r-base=4.0.2
+conda install -c rstudio <- do not do this
+
+conda install -c bioconda r-velocyto.r
+
+conda list | grep !velo
+
+Pete suggestion:
+point to conda R version path in rstudio
+
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(ggplot2)
+
+## In conclusion:
+
+create new environment
+download R and velocyto
+module load rstudio then R
+
+conda activate bgmp_R
+ml rstudio
+ml R/4.0.2
+rstudio
+library(velocyto.R)
+
+system("type R")
+file.path(R.home("bin"), "R")
+
+R is /packages/R/4.0.2_gcc7/bin/R
+[1] "projects/bgmp/cchua/miniconda3/envs/bgmp_R/lib/R/bin/R"
+
+##################################################################
+
+# Jason's Notes:
+
+# Summary:
+# * Problems installing r-velocyto.r.
+# * Able to install r-velocyto.r via conda.
+# * Also ablve to install rstudio via conda.
+#     - Why do this? Possible problems with different versions of R needed
+#         by different packages such as rstduio and some of the other ones.
+#     - Maybe try installing via source????
+# * rstudio installed via conda requires / ends up with R version 3.6.1.
+#     - Note some packages may be unahppy with 3.6.1, we don't know yet though?
+# * Installed other packages from within R (install.packages())
+# * But MUDAN is being difficult. No o
+#
+# * Pete's suggestion of rstduio installed via source might be very promising.
+# * Another thing to do is look at MUDAN's R version requirements, if any?
+#     - See if other peopel have been able to install MUDAN?
+#     - FIRST! Install MUDAN in it's own clean envionrment under different
+#         versions of R, just to see if you can do it.
+#     - It's actually a MUDAN requirement (sva) that is failing install. Here
+#         is the error:
+#                 Execution halted
+#                 ERROR: lazy loading failed for package ‘sva’
+#                 * removing ‘/gpfs/projects/postlethwait/sydes/miniconda3/envs/velocityo-play5/lib/R/library/sva’
+#                 Error: Failed to install 'MUDAN' from GitHub:
+#                   (converted from warning) installation of package ‘sva’ had non-zero exit status
+#
+#
+# * DO you really *need* MUDAN?  Can you possible do some sort of r-object export to
+#     a file, then load it in under a different version of R, or SOMETHING like that?
+
+
+####################################################
+####################################################
+####################################################
+
+# On talapas OnDemand:
+# conda create -n velocityo-play5
+# conda activate velocityo-play5
+# conda install r-velocyto.r rstudio r-devtools
+# rstudio
+
+####################################################
+####################################################
+####################################################
+
+# The R script:
+
+# One time only:
+install.packages('irlba')
+install.packages('Rtsne')
+install.packages('RANN')
+install.packages('igraph')
+
+# Load up the libraries
+require(devtools)
+library(irlba)
+library(Rtsne)
+library(RANN)
+library(igraph)
+
+library(velocyto.R)
+
+# Everything up to here seems to work??!!
+# But MUDAN install fails.  Sad.
+
+devtools::install_github('JEFworks/MUDAN')
+library(MUDAN)
+
+http://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/scvelo.html
+
+https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/velocity.html
+
+subcluster then redo seurat for just iOSNs and mOSNs?
+
+in R terminal
+install.packages("devtools")
+
+restart R
+library(devtools)
+install_github("velocyto-team/velocyto.R")
+remotes::install_github('satijalab/seurat-wrappers')
+
+nadia_30dpf_merged_subsetClusters <- SubsetData(object = nadia_30dpf_merged, ident.remove =c(34), do.clean = TRUE, subet.raw = TRUE)
+
+
+# Matt
+sed 's/\t/,/g' file.tsv > file.csv
+                                Create new conda environment: velocytoR3
+                                conda config --add channels bioconda
+                                conda config --add channels conda-forge
+                                conda install -c conda-forge r-devtools
+                                conda install r-base=4.0.2
+                                conda install -c bioconda r-velocyto.r
+                                conda install r-biomartr
+                                ml R/4.0.2
+                                rstudio
+
+
+
+#!/bin/bash
+#SBATCH --partition=bgmp        ### Partition (like a queue in PBS)
+#SBATCH --account=bgmp          ### Account used for job submission
+
+/usr/bin/time -v zcat features.tsv.gz | sed 's/\t/,/g' > features.csv
+
+### FINAL
+
+conda remove --name bgmp_R --all
+conda create --name bgmp_R
+conda activate bgmp_R
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install -c conda-forge r-devtools
+conda install r-base=4.0.2
+conda install -c bioconda r-velocyto.r
+conda install r-biomartr <- leave off
+ml rstudio
+ml R/4.0.2
+rstudio
+install.packages("Seurat")
+library(devtools)
+install_github('satijalab/seurat-wrappers')
+
+installing seurat after devtools removes devtools
+
+can use install_github without devtools by using remotes::install_github
+
+after installing seuratwrapper cannot load seurat or seuratwrapper libraries; missing ZLIB_1.2.9
+
+01/06/2021
