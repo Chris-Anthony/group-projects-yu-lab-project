@@ -1466,6 +1466,8 @@ Adipose tissue:	Sfrp2	Col3a1	Dcn	Lum	Col1a1	Col1a2
 Neural stem cell/Olfactory ensheathing glia:	Fabp7	Plp1	Apoe			
 lymphocyte (Lacrimal gland):	Cxcr6	Cd3g	Trbc2	Cd3d	Ptprcap	
 
+http://bio-bigdata.hrbmu.edu.cn/CellMarker/ 
+
 ----------------------
 |     12/23/2020     |
 ----------------------
@@ -1750,3 +1752,164 @@ can use install_github without devtools by using remotes::install_github
 after installing seuratwrapper cannot load seurat or seuratwrapper libraries; missing ZLIB_1.2.9
 
 01/06/2021
+
+conda remove --name bgmp_R --all
+conda create --name bgmp_R
+conda activate bgmp_R
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install r-base=4.0.2
+ml rstudio
+ml R/4.0.2
+rstudio
+install.packages("Seurat")
+
+conda install -c bioconda r-velocyto.r
+remotes::install_github('satijalab/seurat-wrappers')
+
+The downloaded source packages are in 
+    'tmp/RtmphT8ZR3/downloaded_packages'
+Warning in install.packages :
+    converting NULL pointer to R NULL
+
+got the counts matrix for matt to try with the jeffworks vignette using the following command:
+pbmc[["RNA"]]@counts
+
+then exporting to csv in R
+write.csv(df, "path/file_name.csv", row.names=TRUE)
+
+attemp 2 million:
+conda remove --name bgmp_R --all
+conda create --name bgmp_R
+conda activate bgmp_R
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install r-base=4.0.2
+conda install -c conda-forge r-seurat
+
+also tried
+conda install -c bioconda r-seurat
+
+both gave the same message
+
+Error in loadNamespace(name) : there is no package called 'rmarkdown'
+Error: no more eror handlers available (recursive errors?); invoking 'abort' restart
+
+mgi_symbol replaces hgnc_symbol in biomaRt step
+https://support.bioconductor.org/p/112839/
+
+conda install -c bioconda r-velocyto.r --> changes r-base to 4.0.3?
+install.packages(seurat) -> error with GLIBCXX_3.4.26 not found required by reticulate.so
+
+retry environment but with ml R/4.0.3
+
+tried this:
+conda install r-base=4.0.2 r-seurat r-velocyto.r 
+
+SafetyError: The package for zlib located at /projects/bgmp/cchua/miniconda3/pkgs/zlib-1.2.11-h516909a_1010
+appears to be corrupted. The path 'lib/libz.a'
+has an incorrect size.
+    reported size: 150242 bytes
+    actual size: 160378 bytes
+
+SafetyError: The package for zlib located at /projects/bgmp/cchua/miniconda3/pkgs/zlib-1.2.11-h516909a_1010
+appears to be corrupted. The path 'lib/libz.so.1.2.11'
+has an incorrect size.
+    reported size: 109416 bytes
+    actual size: 133384 bytes
+
+conda install -c conda-forge zlib --force-reinstall
+
+same error
+
+01/07/2021
+
+as tried downloading zlib from source
+https://geeksww.com/tutorials/libraries/zlib/installation/installing_zlib_on_ubuntu_linux.php
+https://www.systutorials.com/how-to-install-the-zlib-library-in-ubuntu/
+
+created fake directories for these: lib2/ and test/
+cd test/
+wget http://www.zlib.net/zlib-1.2.11.tar.gz
+tar -xvzf zlib-1.2.11.tar.gz
+cd zlib-1.2.11
+./configure --prefix=/gpfs/projects/bgmp/cchua/miniconda3/envs/bgmp_test/lib2
+make install
+
+comment in  this thread suggest downloading the development package 
+https://stackoverflow.com/questions/61484173/r-4-0-0-configure-error-zlib-library-and-headers-are-required
+https://packages.ubuntu.com/bionic/zlib1g-dev
+
+downloading zlib library in R?
+https://bioconductor.org/packages/release/bioc/html/zlibbioc.html
+which downloads source code of zlib-1.2.5
+
+switching over to local desktop
+conda create --name velo
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install r-base=4.0.2 r-seurat r-velocyto.r
+
+Examining conflict for cairo r-reshape2 r-brio r-zoo r-matrix r-purrr r-velocyto.r r-gtools r-fnn r-munsell r-dplyr r/ o
+
+rstudio isnt playing nicely with other conda installations
+
+devtools::install_github('satijalab/seurat-wrappers')
+
+01/11/2021
+
+conda remove --name bgmp_test --all
+conda create --name bgmp_velo
+conda activate bgmp_velo
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install r-base=4.0.2 r-velocyto.r
+ml rstudio
+ml R/4.0.2
+rstudio
+
+https://jef.works/blog/2020/01/14/rna_velocity_analysis_tutorial_tips/
+
+01/11/2021
+
+jason helped us with the mudan issue. we need to run on our local computers
+so far only worked on Alyx' Mac. Windows are having more problems either downloading library on windows system or opening up rstudio on the linux subsystem
+
+trying to mamba install rstudio to see if we get a more current version of R to download with it
+
+we can change the path for the libraries in R using the following
+
+1.
+Sys.getenv()
+Sys.setenv(path="")
+
+or 
+
+2. 
+.libPaths() # <- shows you location of libraries rstudio uses
+myPath <- .libPaths()
+myPath <- c(myPath, "path of library containing velocyto.R package")
+.libPaths(myPath)
+
+confirm location update with tools->install packages dropdown
+
+github notes dependency issues and the contributors are not actively maintaining the package.
+they suggest using scvelo instead
+
+https://jef.works/blog/2020/08/25/using-scvelo-in-R-using-reticulate/
+
+01/12/2021
+
+Did subclustering of the mOSNs
+ colnames(subset(obj, subset = seurat_clusters == 0 | etc.))
+ p10_sub <- obj[, colnames]
+
+ tested different resolutions, shape doesnt change
+ settled on 0.25 for resolution to get 3 clusters
+
+DotPlot might better than Violin Plot to show low expression levels of apoptotic (Trp3), neurogenesis (Neurod1) and maturity (Bcl2) markers
+
+Currently applying Pete's method to see top differentially expressed genes between the three Clusters
+
+did some work in scVelo. there are problems with the the hdf5r library again when trying to install SeuratDisk library dependency
+might have to work on local desktop for that portion. 
