@@ -2,10 +2,6 @@
 
 ### *Authors:* Alyx Gray, Chris Chua, & Matt Chang
 
-#### *Brief background on sequencing data*
-
-Tissue was from the olfactory epithelium of a 10-day old mouse. 10X Chromium version 2 was used.
-
 #### *Trimming R1 by one nucleotide base*
 
 Read 1 contained the cell barcode (C) and the unique molecular identifier (UMI) (U). There is a 16-nucleotide cell barcode and a 10-nucleotide UMI, situated as such:
@@ -61,3 +57,36 @@ $dir/CellRanger/cellranger-4.0.0/bin/cellranger count \
 --localmem=64
 
 ```
+
+# *Summarized CellRanger Web Summary*
+
+| **Cells** |     |
+|-----      |-----|
+| Est. Number of Cells      | 9,149 |
+| Fraction Reads in Cells   | 65.8% |
+| Mean Reads per Cell       | 38,189 |
+| Median Genes per Cell     | 1,738 |
+| Total Genes Detected      | 23,280 |
+| Median UMI Counts per Cell | 3,343 |
+
+| **Sequencing** |     |
+|-----           |-----|
+| Number of Reads       | 349,389,544 |
+| Valid Barcodes        | 97.1% |
+| Valid UMIs            | 99.9% |
+| Sequencing Saturation | 75.3% |
+| Q30 Bases in Barcode  | 96.7% |
+| Q30 Bases in RNA Read | 88.5% |
+| Q30 Bases in UMI      | 97.2% |
+
+
+| **Mapping** |       |
+|-----        |-----  |
+| Reads Mapped to Genome                        | 96.2% |
+| Reads Mapped Confidently to Genome            | 92.9% |
+| Reads Mapped Confidently to Intergenic Regions | 3.9%|
+| Reads mapped Confidently to Intronic Regions  | 17.7% |
+| Reads Mapped Confidently to Exonic Regions    | 71.3% |
+| Reads Mapped Confidently to Transcriptome     | 67.9% |
+| Reads Mapped Antisense to Gene                | 2.1% |
+
