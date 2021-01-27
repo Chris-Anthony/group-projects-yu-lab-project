@@ -1913,3 +1913,32 @@ Currently applying Pete's method to see top differentially expressed genes betwe
 
 did some work in scVelo. there are problems with the the hdf5r library again when trying to install SeuratDisk library dependency
 might have to work on local desktop for that portion. 
+
+Meeting with Dr. Yu - 01/19/2021
+
+clustree
+
+span different resolutions
+look at the cluster tree
+so if the next layer has input from more than one node, this means that there was overclustering
+
+early born mOSNs have shorter lifespans
+short timeframe for apoptosis, very few cells expressing this at any specific time point
+
+proportion of early-born mOSNs to the total cell population should be much lower than 25%
+
+incorrect clustering? currently clustering based on other genes instead of Bcl2
+need to combine with other timepoints to get better clustering of similar cells because the population is too low at P10
+
+Gap43 navigator, immature cell markers
+Bcl2 
+Gng8
+Lhx2
+
+Too few navigator neurons to cluster correctly at this timepoint
+
+Monocle3 - Cell Trajectory - plot genes and see how expression pattern changes over pseudotime
+Slingshot - Cell Trajectory
+
+RNA velocyte - see how clusters change over time
+
