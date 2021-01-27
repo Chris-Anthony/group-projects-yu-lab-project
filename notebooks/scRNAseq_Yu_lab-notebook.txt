@@ -1,22 +1,57 @@
-----------------------
-|  scRNA-seq Yu Lab  |
-----------------------
+----------------------------------------------------------------
+|  scRNA-seq Analysis of the Olfactory Epithelium in P10 Mice  |
+----------------------------------------------------------------
 
 Christian Chua
-Bioninformatics 624
-Fall 2020
+    University of Oregon, Bioinformatics and Genomics Master's program
+    In collaboration with Dr. Yu at the Stower Institute of Medical Research
+    With cohort members Alyx Gray and Matt Chang
+    Fall 2020 - Winter 2021
+
+-----------------------
+| Project Description |
+-----------------------
+
+Olfaction is conducted by a neural network, where information for one odor molecule is carried by one mature olfactory 
+sensory neuron (mOSN) to the brain. During ​the critical period, early-born "navigator" OSNs help to establish this 
+one-to-one map and reestablish it when damaged. However, once this period ends (P7), the navigator OSNs apoptose and 
+are replaced by late-born OSNs that lack the capability to remap. Comparing​ OSN transcriptomes over developmental time 
+will illuminate this process.​​ Here, we are analyzing the differential expression of OSNs at P10 in mice. 
 
 ----------------------
 | Table of Contents  |
 ----------------------
 
 Date        Description
+----------  -------------------------------------------------------------------------------
 10/07/2020  Temporary Data Location; Data Exploration
 10/08/2020  Data Exploration II
 10/13/2020  Info on 10x Genomics, CellRanger, and Seurat
 10/16/2020  Run Cellranger Counts
 10/25/2020  Run FASTQC on fastq files
+10/22/2020  Rstudio on Talapas
 10/26/2020  Run v4 trimmed raw and filtered counts through seurat on talapas
+10/27/2020  Additional Flowcell Data
+10/31/2020  ReRun Cellranger Counts
+11/01/2020  Background Information on Seurat, Mitochondrial Contamination and UMAP
+11/03/2020  Seurat Settings Discussion with Annie
+11/04/2020  Seurat Settings To Be Tested
+11/05/2020  Seurat Analysis Update
+11/10/2020  Marker Annotation and ClusterTree
+11/11/2020  Applied SCTransform, Cluster Annotation
+11/13/2020  Background Information on the Resolution Parameter
+11/16/2020  Testing Combination of Seurat Cutoffs and SCTransform
+12/02/2020  Background Information on Cell Trajectory
+12/04/2020  Background Information on RNA Velocity, Unknown Cluster Identification Method
+12/06/2020  Testing SoupX to remove ambient RNA
+12/23/2020  Installing RNA Velocity Library, Attempt 1
+01/04/2021  Installing RNA Velocity Library, Attempt 2
+01/05/2021  Installing RNA Velocity Library, Attempt 3 (with Pete and Jason)
+01/06/2021  Installing RNA Velocity Library, Attempt 4
+01/07/2021  Installing RNA Velocity Library, Attempt 5
+01/11/2021  Installing RNA Velocity Library, Attempt 7 (with Jason)
+01/12/2021  mOSN Subclustering
+01/19/2021  Clustree for Resolution Parameter
 
 ----------------------
 |     10/07/2020     |
@@ -1519,12 +1554,15 @@ Error: package or namespace load failed for 'igraph' in dyn.load(file, DLLpath =
 might need a new compiler because R version is too recent
 re: https://github.com/igraph/rigraph/issues/213
 
-
-01/04/2021
+----------------------
+|     01/04/2021     |
+----------------------
 
 https://github.com/velocyto-team/velocyto.R/pull/43
 
-01/05/2021
+----------------------
+|     01/05/2021     |
+----------------------
 
 meeting with Jason and Pete to resolve the environment
 
@@ -1751,7 +1789,9 @@ can use install_github without devtools by using remotes::install_github
 
 after installing seuratwrapper cannot load seurat or seuratwrapper libraries; missing ZLIB_1.2.9
 
-01/06/2021
+----------------------
+|     01/06/2021     |
+----------------------
 
 conda remove --name bgmp_R --all
 conda create --name bgmp_R
@@ -1822,7 +1862,9 @@ conda install -c conda-forge zlib --force-reinstall
 
 same error
 
-01/07/2021
+----------------------
+|     01/07/2021     |
+----------------------
 
 as tried downloading zlib from source
 https://geeksww.com/tutorials/libraries/zlib/installation/installing_zlib_on_ubuntu_linux.php
@@ -1856,7 +1898,9 @@ rstudio isnt playing nicely with other conda installations
 
 devtools::install_github('satijalab/seurat-wrappers')
 
-01/11/2021
+----------------------
+|     01/11/2021     |
+----------------------
 
 conda remove --name bgmp_test --all
 conda create --name bgmp_velo
@@ -1869,8 +1913,6 @@ ml R/4.0.2
 rstudio
 
 https://jef.works/blog/2020/01/14/rna_velocity_analysis_tutorial_tips/
-
-01/11/2021
 
 jason helped us with the mudan issue. we need to run on our local computers
 so far only worked on Alyx' Mac. Windows are having more problems either downloading library on windows system or opening up rstudio on the linux subsystem
@@ -1898,7 +1940,9 @@ they suggest using scvelo instead
 
 https://jef.works/blog/2020/08/25/using-scvelo-in-R-using-reticulate/
 
-01/12/2021
+----------------------
+|     01/12/2021     |
+----------------------
 
 Did subclustering of the mOSNs
  colnames(subset(obj, subset = seurat_clusters == 0 | etc.))
@@ -1914,7 +1958,9 @@ Currently applying Pete's method to see top differentially expressed genes betwe
 did some work in scVelo. there are problems with the the hdf5r library again when trying to install SeuratDisk library dependency
 might have to work on local desktop for that portion. 
 
-Meeting with Dr. Yu - 01/19/2021
+----------------------
+|     01/19/2021     |
+----------------------
 
 clustree
 
