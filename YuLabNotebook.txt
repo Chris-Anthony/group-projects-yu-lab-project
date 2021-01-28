@@ -1,3 +1,17 @@
+scRNA-seq of the Mouse Olfactory system
+        Notebook Author: Matt Chang
+        In collaboration with the Yu Lab
+        Co-Authors: Chris Chua, Alyx Gray
+
+Project Description:
+
+        This project aims to describe the process of olfactory map formation in Mus musculus. 
+        Early-born neurons termed "Navigator Neurons" by Wu et al. in 2018 are thought to play a crucial role in the formation of this map. 
+        These navigator neurons are present during the "critical period" (previously described as E21 - P7 in mice by Wu et al. 2018). 
+        After this critical period, olfactory sensory neurons lose the ability to re-map to different glomeruli. 
+        Our data is from P10 (3 days after the critical period) with the goal of identifying and characterizing the status of mature olfactory sensory neurons at this time point in comparison to previously described timepoints (P0, P3, P7, P14, and P21).
+        We characterize this data using Cellranger software (mkfastq and counts) alongside Seurat software. 
+
 10/16/20
 
 FastQ files are Phred 33 encoded
