@@ -1988,3 +1988,127 @@ Slingshot - Cell Trajectory
 
 RNA velocyte - see how clusters change over time
 
+----------------------
+|     03/01/2021     |
+----------------------
+
+http://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/scvelo.html
+
+
+conda activate bgmp_velo
+R --version
+R version 4.0.2 
+
+# r-velocyto.r is already installed
+
+conda install -c bioconda r-seurat
+conda install -c bu_cnio r-seuratwrappers
+
+https://github.com/mojaveazure/seurat-disk
+
+ml rstudio
+ml R/4.0.2
+rstudio
+
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+remotes::install_github("mojaveazure/seurat-disk")
+
+Which would you like to update?
+
+1: All
+2: CRAN packages only
+3: None
+4: Rcpp         (1.0.5      -> 1.0.6)
+5: deldir       (0.2-3      -> 0.2-10)
+6: testthat     (2.3.2      -> 3.0.2)
+7: RcppArmad    (0.10.1.2.2 -> 0.10.2.1.0)
+
+unable to load shared object '/gpfs/projects/bgmp/cchua/miniconda3/envs/bgmp_velo/lib/R/library/sctransform/libs/sctransform.so':
+/packages/gcc/7.3/lib64/libstdc++.so.6: version `GLIBCXX_3.4.26` not found (required by /gpfs/projects/bgmp/cchua/miniconda/envs/bgmp_velo/lib/R/library/sctransform/libs/sctransform.so)
+
+install.packages("Seurat")
+same error
+
+install.packages('sctransform'))
+same version but now for package reticulate
+
+install.packages("reticulate")
+internal error -3 in R_decompress1Error: package or namespace load failed for 'Seurat' in get(Info[i, 1], envir = env):
+lazy-load database 'gpfs/projects/bgmp/cchua/miniconda3/envs/bgmp_velo/lib/R/library/reticulate/R/reticulate.rdb' is corrupt
+
+conda install -c conda-forge r-reticulate
+
+httpuv
+install.packages("httpuv")
+httpuv is corrupt
+
+reload solved corrupt error
+
+Error: package or namespace load failed for 'Seurat' in dyn.load(file, DLLpath = DLLpath, ...):
+unable to load shared object 'gpfs..../png.so':
+/lib64/libz.so.1: version `ZLIB_1.2.9' not found (required by .../libpng16.so.16)
+
+install.packages('png')
+
+conda install -c conda-forge libpng
+conda install -c conda-forge --force-reinstall libpng
+
+https://github.com/FCP-INDI/C-PAC/issues/1040
+conda install -c conda-forge harfbuzz
+conda install -c conda-forge pango
+conda install -c conda-forge glib
+
+conda install -c conda-forge --force-reinstall harfbuzz
+conda install -c conda-forge --force-reinstall pango
+conda install -c conda-forge --force-reinstall glib
+
+conda install -c conda-forge zlib
+conda install -c conda-forge --force-reinstall zlib
+
+tar -xvf ~/Downloads/zlib-1.2.9.tar.gz
+cd zlib-1.2.9
+sudo -s
+./configure; make; make install
+cd /lib/x86_64-linux-gnu
+ln -s -f /usr/local/lib/libz.so.1.2.9/lib libz.so.1
+cd ~
+rm -rf zlib-1.2.9
+
+https://stackoverflow.com/questions/49764125/importing-matplotlib-with-reticulate-in-r
+
+----------------------
+|     03/03/2021     |
+----------------------
+
+https://github.com/basilkhuder/Seurat-to-RNA-Velocity#extracting-meta-data 
+
+conda create --name scvelo
+conda activate scvelo
+
+conda install -c bioconda scvelo
+conda install -c conda-forge jupyterlab
+
+jupyter notebook
+
+https://scvelo.readthedocs.io/scvelo.pl.velocity_embedding.html
+
+----------------------
+|     03/07/2021     |
+----------------------
+
+https://github.com/basilkhuder/Seurat-to-RNA-Velocity
+
+resolved color issue.
+needed to index it
+removed redundant code from vignette
+included RNA velocity stream which gives better picture of the biology
+
+----------------------
+|     03/08/2021     |
+----------------------
+
+to render pdfs from jupyter notebook:
+conda install miktex <- does not work
+saving a png of the final figure instead

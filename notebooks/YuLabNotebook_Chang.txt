@@ -1,3 +1,17 @@
+scRNA-seq of the Mouse Olfactory system
+        Notebook Author: Matt Chang
+        In collaboration with the Yu Lab
+        Co-Authors: Chris Chua, Alyx Gray
+
+Project Description:
+
+        This project aims to describe the process of olfactory map formation in Mus musculus. 
+        Early-born neurons termed "Navigator Neurons" by Wu et al. in 2018 are thought to play a crucial role in the formation of this map. 
+        These navigator neurons are present during the "critical period" (previously described as E21 - P7 in mice by Wu et al. 2018). 
+        After this critical period, olfactory sensory neurons lose the ability to re-map to different glomeruli. 
+        Our data is from P10 (3 days after the critical period) with the goal of identifying and characterizing the status of mature olfactory sensory neurons at this time point in comparison to previously described timepoints (P0, P3, P7, P14, and P21).
+        We characterize this data using Cellranger software (mkfastq and counts) alongside Seurat software. 
+
 10/16/20
 
 FastQ files are Phred 33 encoded
@@ -493,5 +507,65 @@ Velocyto:
                                 Looking at Trp53, Neurod1, and Bcl2 to differentiate early born vs late born cells:
                                         Trp53 and Neurod1 in high abundance indicate early born vs Bcl2 in high abundance indicates late born cells
                                         
+
+
+scVelo Start:
+        Installations:
+                conda install -c bioconda scvelo
+                conda install -c bioconda r-seurat
+                conda install -c bu_cnio r-seuratwrappers
+                conda install -c conda-forge r-hdf5r
+scVelo2
+R version 4.0.3
+set DLLpath:
+        Sys.setenv(DLLpath="/gpfs/projects/bgmp/mchang3/miniconda3/envs/scVelo/lib/")
+        install.packages("Seurat")
+        install.packages("Rcpp")
+
+
+clone bgmp_py37 to scVelo3:
+        conda install -c conda-forge r-hdf5r
+        remotes::install_github("mojaveazure/seurat-disk")
+                Update NO packages (option 3)
+        
+
+        conda install -c conda-forge r-rcpp
+
+MESSED SOMETHING UP -- BGMP_PY37 NO LONGER WORKING
+Re-made bgmp_py37 from the .yaml file
+
+Removed scVelo 2,3,4 envs
+
+Cloned bgmp_py37 into scVelo2
+Seurat library WORKING
+Install SeuratDisk:
+        conda install -c conda-forge r-hdf5r
+        install.packages("remotes")
+        .libPaths(c("/projects/bgmp/mchang3/miniconda3/envs/scVelo2/lib/R/library", .libPaths()))
+        remove.packages("R6")
+        install.packages("scattermore")
+        install.packages("R6")
+        remove.packages("hdf5r")
+        conda install -c conda-forge r-hdf5r
+        conda install -c conda-forge openssl
+        mv ssl scVelo2/lib/R/library/
+        conda remove r-hdf5r
+        conda install -c conda-forge r-hdf5r -p /gpfs/projects/bgmp/mchang3/miniconda3/envs/scVelo2
+        remove.packages("R6")
+        remove.packages("hdf5r")
+
+        remotes::install_github("mojaveazure/seurat-disk")
+                Update all packages (option 1)
+        AT 1:45 PM 3/2, HIT GITHUB LIMIT: LOCKED OUT UNTIL 10 PM ON 3/2
+
+Install SeuratWrappers:
+        conda install -c bu_cnio r-seuratwrappers -p /gpfs/projects/bgmp/mchang3/miniconda3/envs/scVelo2
+        library(SeuratWrappers)
+                Error: SeuratWrappers installed before R 4.0.0, please re-install it
+        conda remove r-seuratwrappers
+        conda update r-base
+        conda install -c bu_cnio r-seuratwrappers
+        library(SeuratWrappers)
+                Same error...hmmm
 
 
