@@ -509,3 +509,63 @@ Velocyto:
                                         
 
 
+scVelo Start:
+        Installations:
+                conda install -c bioconda scvelo
+                conda install -c bioconda r-seurat
+                conda install -c bu_cnio r-seuratwrappers
+                conda install -c conda-forge r-hdf5r
+scVelo2
+R version 4.0.3
+set DLLpath:
+        Sys.setenv(DLLpath="/gpfs/projects/bgmp/mchang3/miniconda3/envs/scVelo/lib/")
+        install.packages("Seurat")
+        install.packages("Rcpp")
+
+
+clone bgmp_py37 to scVelo3:
+        conda install -c conda-forge r-hdf5r
+        remotes::install_github("mojaveazure/seurat-disk")
+                Update NO packages (option 3)
+        
+
+        conda install -c conda-forge r-rcpp
+
+MESSED SOMETHING UP -- BGMP_PY37 NO LONGER WORKING
+Re-made bgmp_py37 from the .yaml file
+
+Removed scVelo 2,3,4 envs
+
+Cloned bgmp_py37 into scVelo2
+Seurat library WORKING
+Install SeuratDisk:
+        conda install -c conda-forge r-hdf5r
+        install.packages("remotes")
+        .libPaths(c("/projects/bgmp/mchang3/miniconda3/envs/scVelo2/lib/R/library", .libPaths()))
+        remove.packages("R6")
+        install.packages("scattermore")
+        install.packages("R6")
+        remove.packages("hdf5r")
+        conda install -c conda-forge r-hdf5r
+        conda install -c conda-forge openssl
+        mv ssl scVelo2/lib/R/library/
+        conda remove r-hdf5r
+        conda install -c conda-forge r-hdf5r -p /gpfs/projects/bgmp/mchang3/miniconda3/envs/scVelo2
+        remove.packages("R6")
+        remove.packages("hdf5r")
+
+        remotes::install_github("mojaveazure/seurat-disk")
+                Update all packages (option 1)
+        AT 1:45 PM 3/2, HIT GITHUB LIMIT: LOCKED OUT UNTIL 10 PM ON 3/2
+
+Install SeuratWrappers:
+        conda install -c bu_cnio r-seuratwrappers -p /gpfs/projects/bgmp/mchang3/miniconda3/envs/scVelo2
+        library(SeuratWrappers)
+                Error: SeuratWrappers installed before R 4.0.0, please re-install it
+        conda remove r-seuratwrappers
+        conda update r-base
+        conda install -c bu_cnio r-seuratwrappers
+        library(SeuratWrappers)
+                Same error...hmmm
+
+
