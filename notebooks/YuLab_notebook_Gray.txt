@@ -748,7 +748,7 @@ conda install r-base=4.0.2
 conda install r-biomartr
 conda install -c bioconda r-velocyto.r
 
-### SHIIITTTTT.... Forgot to activate environment!!!! Need to uninstall conda stuff.
+### ...Forgot to activate environment!!!! Need to uninstall conda stuff.
 conda remove r-velocyto.r
 conda remove r-biomartr
 conda remove r-base=4.0.2
@@ -1086,6 +1086,220 @@ seurat_object@meta.data$seurat_clusters
 
 
 
+############################################################
+######################## 03/01/2021 ########################
+############################################################
+
+### Installing new environment to run scVelo for RNA velocity.
+conda activate bgmp_py37
+cd /projects/bgmp/shared/groups/2020/neuron_nerds/alyx
+conda env export > bgmp_py37_new.yaml
+conda env create --name scVelo --file bgmp_py37_new.yaml
+conda activate scVelo
+conda install scVelo
+ml rstudio/1.0
+ml R/4.0.2
+
+### Just kidding, fresh environment...
+conda env create --name scVelo2
+conda activate scVelo2
+conda config --add channels bioconda
+conda config --add channels conda-forge
+
+### Was getting a conda channels error message
+### Removed channels and trying again.
+conda config --remove-key channels
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install scVelo
+ml rstudio/1.0
+ml R/4.0.2
+rstudio
+library(Seurat)
+library(remotes)
+remotes::install_github("mojaveazure/seurat-disk")
+- Error... unable to load hdf5r dependencies
+conda install -c bioconda r-seurat
+conda install -c conda-forge r-hdf5r
+conda install -c bu_cnio r-seuratwrappers
+ml rstudio/1.0
+ml R/4.0.2
+rstudio
+library(Seurat)
+  ERROR: package or namespace load failed for "Seurat' in dyn.load(file, DLLpath = DLLpath, ...):
+  unable to load shared object '/gpfs/projects/bgmp/agray11/miniconda3/envs/scVelo2/lib/R/library/Rcpp/libs/Rcpp.so':
+  /packages/gcc/7.3 lib64/libstdc++.so.6: version 'GLIBCXX_3.4.26' not found (required by 
+  /gpfs/projects/bgmp/agray11/miniconda3/envs/scVelo2/lib/R/library/Rcpp/libs/Rcpp.so)
+Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS=TRUE)
+library(Seurat)
+  ERROR (same as above)
+library(Rcpp)
+  ERROR (same as above)
+conda install -c conda-forge r-rcpp
+  # All requested packages already installed.
+
+ml purge
+ml slurm/19.05 gcc/7.3
+ml rstudio/1.0
+ml R/4.0.2
+rstudio
+install.packages("Rcpp")
+  DONE
+library(Seurat)
+  ERROR
+
+conda list | grep "r-base"
+r-base 3.6.3 ## Need to remove and replace with r-base=4.0.2
+conda install r-base=4.0.2
+#remotes::install_github("satijalab/seurat-wrappers")
+
+### Redoing a new environment...
+ml rstudio/1.0
+ml R/4.0.2
+conda deactivate
+conda create --name scVelo3
+conda activate scVelo3
+conda install r-base=4.0.2
+conda install -c conda-forge r-hdf5r
+conda install -c bioconda r-seurat
+conda install -c bu_cnio r-seuratwrappers
+rstudio
+library(Seurat)
+  ERROR: package or namespace load failed for 'Seurat' in dyn.load(file, DLLpath - DLLpath, ...):
+  unable to load shared object '/gpfs/projects/bgmp/agray11/miniconda/envs/velocyto2/lib/R/library/png/libs/png.so':
+  /lib64/libz.so.1: version 'ZLIB_1.2.9' not found (required by /projects/bgmp/agray11/miniconda3/envs/velocyto2/lib/libpng16.so.16)
 
 
+############################################################
+######################## 03/03/2021 ########################
+############################################################
 
+### Trying again to get scVelo up and running:
+
+conda create --name scVelo4
+conda activate scVelo4
+ml purge
+ml slurm/19.05 gcc/7.3
+ml rstudio/1.0
+ml R/4.0.2
+rstudio
+library(Seurat) - Worked!!
+library(remotes)
+remotes::install_github('satijalab/seurat-wrappers')
+  DONE
+library(SeuratWrappers) - Worked!!
+remotes::install_github("mojaveazure/seurat-disk")
+  ERROR: configureation failed for package 'hdf5r'
+install.packages("hdfr5")
+  ERROR: hdf5 does not seem to be installed on your platform.
+  Please install the hdf5 library.
+
+### In scVelo4 environment and closed out of Rstudio:
+ml purge
+ml slurm/19.05 gcc/7.3
+conda install -c conda-forge hdf5
+  DONE
+ml rstudio/1.0
+ml R/4.0.2
+library(Seurat) - Worked!
+library(SeuratWrappers) - Worked!
+remotes::install_github("mojaveazure/seurat-disk")
+  ERROR: installation of package 'hdf5r' had non-zero exit status.
+install.packages("hdf5r)
+  ERROR: package or namespace load failed for 'hdf5r' in dyn.load(file, DLLpath = DLLpath, ...):
+  unable to load shared object '/gpfs/home/agray11/R/x86_64-pc-linux-gnu-library/4.0/00LOCK-hdf5r/00new/hdf5r/libs/hdf5r.so':
+  libhdf5_hl.so.200: cannot open shared object file: No such file or directory.
+
+### Seems like I need to download the hdf5 library through sudo or brew, but
+can't do that on Talapas. Try on the local computer??
+brew update
+conda create --name scVelo4
+conda activate scVelo4
+open -na Rstudio
+> R version 4.0.2 (2020-06-22) 
+library(Seurat) - Worked!
+remotes::install_github('satijalab/seurat-wrappers')
+  DONE
+library(SeuratWrappers) - Worked!
+remotes::install_github("mojaveazure/seurat-disk")
+  DONE
+library(SeuratDisk) - Worked!
+
+### Closed Rstudio, back on terminal:
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install scvelo
+  DONE
+open -na Rstudio 
+library(Seurat)
+library(SeuratWrappers)
+library(SeuratDisk)
+  -- All good so far...
+
+### Location of .loom file:
+cd /Users/agray11/bioinformatics/FALL2020/Bi624_Lab/Group_Project
+scp agray11@talapas-ln1.uoregon.edu:/projects/bgmp/shared/groups/2020/neuron_nerds/CellRanger/cellranger-4.0.0/FullCounts/velocyto/FullCounts.loom .
+
+### Reading in the data in Rstudio and got this handy notification:
+>ldat <- ReadVelocity(file = "FullCounts.loom")
+  Package velocyto-team/velocyto.R is not yet installed. Install now?
+
+### I thought this didn't require velocyto.R!?!? ***SIGH***
+remotes::install_github("velocyto-team/velocyto.R")
+  ERROR: ld: warning: directory not found for option '-L/usr/local/gfortran/lib/gcc/x86_64-apple-darwin18/8.2.0'
+  ld: warning: directory not found for option '-L/usr/local/gfortran/lib'
+  ld: library not found for -lgfortran
+  clang: error: linker command failed with exit code 1 (use -v to see invocation)
+  make: *** [velocyto.R.so] Error 1
+  ERROR: compilation failed for package ‘velocyto.R’
+  * removing ‘/Library/Frameworks/R.framework/Versions/4.0/Resources/library/velocyto.R’
+  installation of package ‘/var/folders/h2/blfk4m154qs66xzbtkw5r43r0000gn/T//RtmpWzQZTP/file124281e7a7642/velocyto.R_0.6.tar.gz’ had non-zero exit statusError in loadNamespace(name) : there is no package called ‘velocyto.R’
+
+### Possible solutions?
+https://medium.com/biosyntax/following-up-library-dependency-when-compiling-r-packages-89f191b9f227
+https://github.com/ponylang/ponyc/issues/3684
+$ which clang
+/usr/bin/clang
+(scVelo4) MacBook-Pro:local agray11$ clang -v
+Apple clang version 12.0.0 (clang-1200.0.32.29)
+Target: x86_64-apple-darwin20.3.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+
+$ which gfortran
+/usr/local/bin/gfortran
+(scVelo4) MacBook-Pro:local agray11$ gfortran -v
+Using built-in specs.
+COLLECT_GCC=gfortran
+COLLECT_LTO_WRAPPER=/usr/local/Cellar/gcc/10.2.0_2/libexec/gcc/x86_64-apple-darwin19/10.2.0/lto-wrapper
+Target: x86_64-apple-darwin19
+Configured with: ../configure --build=x86_64-apple-darwin19 --prefix=/usr/local/Cellar/gcc/10.2.0_2 --libdir=/usr/local/Cellar/gcc/10.2.0_2/lib/gcc/10 --disable-nls --enable-checking=release --enable-languages=c,c++,objc,obj-c++,fortran --program-suffix=-10 --with-gmp=/usr/local/opt/gmp --with-mpfr=/usr/local/opt/mpfr --with-mpc=/usr/local/opt/libmpc --with-isl=/usr/local/opt/isl --with-system-zlib --with-pkgversion='Homebrew GCC 10.2.0_2' --with-bugurl=https://github.com/Homebrew/homebrew-core/issues --disable-multilib --with-native-system-header-dir=/usr/include --with-sysroot=/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk SED=/usr/bin/sed
+Thread model: posix
+Supported LTO compression algorithms: zlib
+gcc version 10.2.0 (Homebrew GCC 10.2.0_2) 
+
+https://developer.apple.com/forums/thread/666700
+$ sudo xcode-select --install
+Password:
+xcode-select: error: command line tools are already installed, use "Software Update" to install updates
+
+### Forget about using that old vignette: going to use this one instead:
+https://github.com/basilkhuder/Seurat-to-RNA-Velocity#extracting-meta-data
+For the new environment (FOLLOW THE ONES BELOW!!!!):
+    DIDN'T DO THESE:::::::::::
+    conda create --name scVelo5
+    conda activate scVelo5
+    conda install -c bioconda scvelo
+    #conda install numpy scipy cython numba matplotlib scikit-learn h5py click
+    #conda install velocyto
+    #conda install anndata -c bioconda
+    conda install -c conda-forge jupyterlab
+    conda install -c conda-forge notebook
+
+### FOLLOW THIS:
+conda create --name scVelo5
+conda activate scVelo5
+conda install -c bioconda scvelo
+conda install -c conda-forge jupyterlab
+conda install -c conda-forge notebook
