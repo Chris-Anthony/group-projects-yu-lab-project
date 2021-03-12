@@ -52,6 +52,10 @@ Date        Description
 01/11/2021  Installing RNA Velocity Library, Attempt 7 (with Jason)
 01/12/2021  mOSN Subclustering
 01/19/2021  Clustree for Resolution Parameter
+03/01/2021  Attempted install of scVelo and dependencies for use in R through conda
+03/03/2021  New environment for scVelo in jupyter notebook
+03/07/2021  scVelo analysis in jupyter notebook
+03/08/2021  optimizing scVelo code for rendered output
 
 ----------------------
 |     10/07/2020     |
